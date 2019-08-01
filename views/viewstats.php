@@ -11,7 +11,11 @@
 
 <body>
     <div id="appmain">
-        <app :data='<?=json_encode($data)?>' :questiongroups='<?=json_encode($questiongroups)?>'/>
+        <app 
+            :data='<?=json_encode($data)?>' 
+            :questiongroups='<?=json_encode($questiongroups)?>' 
+            :word-cloud-settings='<?=json_encode($wordCloudSettings)?>'
+        />
     </div>
 </body>
 

@@ -76,7 +76,7 @@ class PSInstaller {
             "menu_description" => 'Open public statistics',
             "menu_icon" => 'binoculars',
             "menu_icon_type" => 'fontawesome',
-            "menu_link" => 'plugin/direct',
+            "menu_link" => 'plugins/direct',
             "permission" => 'surveytexts',
             "permission_grade" => 'update',
             "hideOnSurveyState" => false,

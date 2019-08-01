@@ -15,7 +15,7 @@ class PublicStatistics extends PluginBase {
     protected $storage = 'DbStorage';    
     static protected $description = 'Allow either sharing of statistics with a link, a one time token, or with email and password';
     static protected $name = 'Public and shareable statistics';
-    
+
     public function init()
     {
         /**
@@ -136,7 +136,16 @@ class PublicStatistics extends PluginBase {
         $oSurvey = Survey::model()->findByPk($sid);
         $oParser = new PSStatisticParser($sid);
         $aResponseDataList = $oParser->createParsedDataBlock();
-        $output = $this->renderPartial('viewstats', $aResponseDataList, true);
+        $output = $this->renderPartial(
+            'viewstats', 
+            array_merge(
+                $aResponseDataList, 
+                [
+                    'wordCloudSettings' => PSWordCloudSettings::getSettings()
+                ]
+            ),
+            true
+        );
         Yii::app()->getClientScript()->registerPackage('jquery');
         Yii::app()->getClientScript()->registerPackage('bootstrap');
         $this->registerScript('assets/viewstats/build.min/main.css');

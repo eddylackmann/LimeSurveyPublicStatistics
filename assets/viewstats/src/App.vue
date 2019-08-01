@@ -16,7 +16,7 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <main-container :questiongroups="questiongroups"/>
+                <main-container :questiongroups="questiongroups" :word-cloud-settings="wordCloudSettings"/>
             </div>
         </div>
     </div>
@@ -33,6 +33,7 @@ export default {
   props: {
       data: {type: Object, required: true},
       questiongroups: {type: Object, required: true},
+      wordCloudSettings: {type: Object, required: true},
   }
 }
 </script>

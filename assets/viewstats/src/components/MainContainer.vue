@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="row scoped-questiongrouprow" v-for="(questions,gid) in questiongroups" :key="gid" >
-            <questionpanel v-for="question in questions" :key="question.qid" :question="question" />
+            <questionpanel v-for="question in questions" :key="question.fieldname" :question="question" :word-cloud-settings="wordCloudSettings"/>
         </div>
     </div>
 </template>
@@ -17,7 +17,8 @@ export default {
   },
   
   props: {
-    questiongroups: {type: Object, required: true}
+    questiongroups: {type: Object, required: true},
+    wordCloudSettings: {type: Object, required: true}
   }
 }
 </script>

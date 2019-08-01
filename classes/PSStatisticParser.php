@@ -107,6 +107,7 @@ class PSStatisticParser {
 
     private function _parse_list_dropdown($oQuestion) {
         $aQuestionData = [];
+        $aAnswers = array_map( function($oA) { return $oA->attributes; }, $oQuestion->answers);
 
         $baseFieldname = "{$oQuestion->sid}X{$oQuestion->gid}X{$oQuestion->qid}";
         $aQuestionData[$baseFieldname] = [
@@ -116,7 +117,8 @@ class PSStatisticParser {
             'sid'=>$oQuestion->sid,
             "gid"=>$oQuestion->gid,
             "qid"=>$oQuestion->qid,
-            "aid"=>$oQuestion->title
+            "aid"=>$oQuestion->title,
+            'answeroptions' =>  $aAnswers
         ];
         
         if ($oQuestion->other == "Y") {
@@ -137,6 +139,7 @@ class PSStatisticParser {
 
     private function _parse_list_with_comment($oQuestion) {
         $aQuestionData = [];
+        $aAnswers = $oQuestion->answers;
 
         $baseFieldname = "{$oQuestion->sid}X{$oQuestion->gid}X{$oQuestion->qid}";
         $aQuestionData[$baseFieldname] = [
@@ -146,7 +149,8 @@ class PSStatisticParser {
             'sid'=>$oQuestion->sid,
             "gid"=>$oQuestion->gid,
             "qid"=>$oQuestion->qid,
-            "aid"=>$oQuestion->title
+            "aid"=>$oQuestion->title,
+            'answeroptions' =>  $aAnswers
         ];
 
         $otherFieldname = "{$baseFieldname}comment";
@@ -166,6 +170,7 @@ class PSStatisticParser {
 
     private function _parse_to_base($oQuestion) {
         $aQuestionData = [];
+        $aAnswers = $oQuestion->answers;
 
         $baseFieldname = "{$oQuestion->sid}X{$oQuestion->gid}X{$oQuestion->qid}";
         $aQuestionData[$baseFieldname] = [
@@ -175,7 +180,8 @@ class PSStatisticParser {
             'sid'=>$oQuestion->sid,
             "gid"=>$oQuestion->gid,
             "qid"=>$oQuestion->qid,
-            "aid"=>$oQuestion->title
+            "aid"=>$oQuestion->title,
+            'answeroptions' =>  $aAnswers
         ];
 
         return $aQuestionData;
@@ -183,6 +189,7 @@ class PSStatisticParser {
 
     private function _parse_array_multi_flex($oQuestion) {
         $aQuestionData = [];
+        $aAnswers = $oQuestion->answers;
 
         $aSubquestions = $oQuestion->subquestions;
         uasort(
@@ -218,7 +225,8 @@ class PSStatisticParser {
                     "gid"=>$oQuestion->gid,
                     "qid"=>$oQuestion->qid,
                     "aid"=>$oScale0Question->title."_".$oScale1Question->title,
-                    "sqid"=>$oScale0Question->qid
+                    "sqid"=>$oScale0Question->qid,
+                    'answeroptions' =>  $aAnswers
                 ];
             }
         }
@@ -228,6 +236,7 @@ class PSStatisticParser {
 
     private function _parse_array_multiscale($oQuestion) {
         $aQuestionData = [];
+        $aAnswers = $oQuestion->answers;
 
         $aSubquestions = $oQuestion->subquestions;
         uasort(
@@ -247,7 +256,8 @@ class PSStatisticParser {
                 "gid"=>$oQuestion->gid,
                 "qid"=>$oQuestion->qid,
                 "aid"=>$oSubquestion->title, 
-                "scale_id"=>0
+                "scale_id"=>0,
+                'answeroptions' =>  $aAnswers
             ];
             $fieldname_1 = "{$oQuestion->sid}X{$oQuestion->gid}X{$oQuestion->qid}{$oSubquestion->title}#1";
             $aQuestionData[$fieldname_1] = [
@@ -258,7 +268,8 @@ class PSStatisticParser {
                 "gid"=>$oQuestion->gid,
                 "qid"=>$oQuestion->qid,
                 "aid"=>$oSubquestion->title, 
-                "scale_id"=>0
+                "scale_id"=>1,
+                'answeroptions' =>  $aAnswers
             ];
         }
 
@@ -267,6 +278,7 @@ class PSStatisticParser {
 
     private function _parse_ranking($oQuestion) {
         $aQuestionData = [];
+        $aAnswers = $oQuestion->answers;
 
         $answersCount = intval(
             Answer::model()->countByAttributes(
@@ -290,7 +302,8 @@ class PSStatisticParser {
                 'sid'=>$oQuestion->sid,
                 "gid"=>$oQuestion->gid,
                 "qid"=>$oQuestion->qid,
-                "aid"=>$oQuestion->title.'#'.$i
+                "aid"=>$oQuestion->title.'#'.$i,
+                'answeroptions' =>  $aAnswers
             ];
         }
 
@@ -409,7 +422,8 @@ class PSStatisticParser {
                 "gid"=>$oQuestion->gid,
                 "qid"=>$oQuestion->qid,
                 "aid"=>$oSubquestion->title,
-                'sqid'=>$oSubquestion->qid
+                'sqid'=>$oSubquestion->qid,
+                'answeroptions' =>  []
             ];
         }
 
@@ -423,6 +437,7 @@ class PSStatisticParser {
                 "gid"=>$oQuestion->gid,
                 "qid"=>$oQuestion->qid,
                 "aid"=>$oQuestion->question."other",
+                'answeroptions' =>  []
             ];
         }
 
@@ -438,6 +453,7 @@ class PSStatisticParser {
                 return $oQuestionA->question_order < $oQuestionB->question_order ? -1 : 1;
             }
         );
+        $aAnswers = $oQuestion->answers;
 
         foreach ($aSubquestions as $oSubquestion) {
             $fieldname = "{$oQuestion->sid}X{$oQuestion->gid}X{$oQuestion->qid}{$oSubquestion->title}";
@@ -449,7 +465,8 @@ class PSStatisticParser {
                 "gid"=>$oQuestion->gid,
                 "qid"=>$oQuestion->qid,
                 "aid"=>$oSubquestion->title,
-                'sqid'=>$oSubquestion->qid
+                'sqid'=>$oSubquestion->qid,
+                'answeroptions' => $aAnswers
             ];
         }
 
@@ -468,15 +485,15 @@ class PSStatisticParser {
 
     private function _applyResponseDataToQuestionData(&$aQuestionData) {
         foreach($aQuestionData as $sSGQA => $aQuestionFieldset) {
-            $aAnswers = Yii::app()->db->createCommand()
+            $aResponses = Yii::app()->db->createCommand()
                 ->select($sSGQA)
                 ->from('{{survey_'.$aQuestionFieldset['sid'].'}}')
                 ->queryColumn();
 
-            $aCalculations['count'] = safecount($aAnswers);
-            $aCalculations['countValid'] = safecount(array_filter($aAnswers));
+            $aCalculations['count'] = safecount($aResponses);
+            $aCalculations['countValid'] = safecount(array_filter($aResponses));
             $aCalculations['countInvalid'] = $aCalculations['count']-$aCalculations['countValid'];
-            $aCalculations['aCountValues'] = $this->count_array_values_with_nullables($aAnswers);
+            $aCountValues = $this->count_array_values_with_nullables($aResponses);
 
             $aCalculations['median'] = null;
             $aCalculations['average'] = null;
@@ -485,16 +502,17 @@ class PSStatisticParser {
             
             if ($this->isNumericallySafe($aQuestionFieldset['type'])) {
                 
-                $aCalculations['median'] = $this->calculate_median($aAnswers);
-                $aCalculations['average'] = $this->calculate_average($aAnswers);
-                $aCalculations['variance'] = $this->variance($aAnswers);
-                $aCalculations['std'] = $this->variance($aAnswers, true);
+                $aCalculations['median'] = $this->calculate_median($aResponses);
+                $aCalculations['average'] = $this->calculate_average($aResponses);
+                $aCalculations['variance'] = $this->variance($aResponses);
+                $aCalculations['std'] = $this->variance($aResponses, true);
             }
             
 
 
-            $aQuestionData[$sSGQA]['answers'] = $aAnswers;
+            $aQuestionData[$sSGQA]['answers'] = $aResponses;
             $aQuestionData[$sSGQA]['calculations'] = $aCalculations;
+            $aQuestionData[$sSGQA]['countedValueArray'] = $aCountValues;
         }
     }
 
