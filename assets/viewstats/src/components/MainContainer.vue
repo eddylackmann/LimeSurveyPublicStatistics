@@ -15,11 +15,13 @@ export default {
   components: {
       Questionpanel
   },
-  
   props: {
     questiongroups: {type: Object, required: true},
     wordCloudSettings: {type: Object, required: true}
-  }
+  },
+  data(){
+      return {}
+  },
 }
 </script>
 

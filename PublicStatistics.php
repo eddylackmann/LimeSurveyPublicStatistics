@@ -148,6 +148,7 @@ class PublicStatistics extends PluginBase {
         );
         Yii::app()->getClientScript()->registerPackage('jquery');
         Yii::app()->getClientScript()->registerPackage('bootstrap');
+        Yii::app()->getClientScript()->registerPackage('jspdf');
         $this->registerScript('assets/viewstats/build.min/main.css');
         $this->registerScript('assets/viewstats/build/js/viewstats.js', null, LSYii_ClientScript::POS_END);
         Yii::app()->getClientScript()->render($output);

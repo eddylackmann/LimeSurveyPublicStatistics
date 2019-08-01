@@ -1,5 +1,5 @@
 <template>
-    <div class="panel panel-default">
+    <div class="panel panel-default selector--question-panel">
         <div class="panel-heading">
             <h3 class="panel-title" v-html="renderQuestionHTML(question)" />
         </div>
@@ -10,7 +10,7 @@
                         <vue-plotly @autosize="correctHeight" :data="plotlyData" :layout="plotlyLayout" :options="plotlyConfig"/>
                     </div>
                 </div>
-                <div class="row" v-if="isPlottable && !isOther">    
+                <div class="row selector--buttonrow" v-if="isPlottable && !isOther">    
                     <div class="col-xs-12 text-center">
                         <div class="btn-group" role="group" aria-label="...">
                             <button 
