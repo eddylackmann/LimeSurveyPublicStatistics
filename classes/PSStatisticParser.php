@@ -522,7 +522,7 @@ class PSStatisticParser {
         foreach($arr as $itrt) {
 
             if (!$itrt) {
-                $result[gT('No answer/Not shown')] = isset($result[gT('No answer/Not shown')]) ? $result[gT('No answer/Not shown')]+1 : 0;
+                $result["Keine Antwort"] = isset($result["Keine Antwort"]) ? $result["Keine Antwort"]+1 : 0;
                 continue;
             }
 

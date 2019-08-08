@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>LimeSurvey public statistics</title>
+    <title>Offene Statistik</title>
 </head>
 
 <body>
@@ -20,15 +20,15 @@
         <?php if($oSurvey->hasLogins) { ?> 
             <div class="row">
                 <div class="col-xs-12 jumbotron jumbotron-default well">
-                    <h2>You need to log in with the credentials sent to you: </h2>
+                    <h2>Bitte loggen sie sich mit den Ihnen zugesandten Daten ein: </h2>
                     <form action="<?=$formUrl?>" method="post" name="loginforPublicStatistics" class="form">
                         <div class="row">
                             <div class="form-group col-md-6 col-xs-12">
-                                <label for="email">Email address</label>
+                                <label for="email">E-mail-Addresse</label>
                                 <input type="email" class="form-control" id="email" name="email" placeholder="Email">
                             </div>
                             <div class="form-group col-md-6 col-xs-12">
-                                <label for="password">Password</label>
+                                <label for="password">Passwort</label>
                                 <input type="password" class="form-control" id="password" name="password">
                             </div>
                             <div class="form-group col-xs-12">
@@ -41,7 +41,7 @@
         <?php } else { ?>
             <div class="row">
                 <div class="col-xs-12 jumbotron jumbotron-default well">
-                    <h2>Please type in the participation token: </h2>
+                    <h2>Bitte geben Sie den Zugangsschlüssel ein: </h2>
                     <form action="<?=$formUrl?>" method="post" name="loginforPublicStatistics" class="form">
                         <div class="row">
                             <div class="form-group col-xs-12">

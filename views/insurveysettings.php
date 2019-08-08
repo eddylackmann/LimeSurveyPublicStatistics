@@ -2,7 +2,7 @@
 <div class="container-center">
         <div class="row">
             <div class="col-sm-12">
-                <h3 class="pagetitle">Public statistic settings</h3>
+                <h3 class="pagetitle">Einstellungen zur offenen Statistik</h3>
             </div>
         </div>
         <?php echo TbHtml::form(array("plugins/direct/plugin/PublicStatistics/method/saveinsurveysettings"), 'post', array('name'=>'psinsurveysettings', 'id'=>'psinsurveysettings'));?>
@@ -11,19 +11,19 @@
                 <div class="col-sm-12 text-right ls-space margin bottom-10">
                     <button type="submit" class="btn btn-success pull-right" id="ps--save-button">
                         <i class="fa fa-save"></i>
-                        Save settings
+                        Einstellungen speichern
                     </button>
                 </div>
             </div>  
             <?php if($isActive) { ?>
                 <div class="row">
                     <div class="col-md-12">     
-                        <div class="panel-heading"><h4>Shareable links</h4></div>
+                        <div class="panel-heading"><h4>Teilbare links</h4></div>
                         <div class="panel-body">
                             <div class="list-group">
                                 <div class="list-group-item row"> 
                                     <div class="col-sm-4 col-xs-12 background-muted">   
-                                        Basic link (for logged in users)
+                                        Basislink (Für eingeloggte Benutzer)
                                     </div>  
                                     <div class="col-sm-6 col-xs-12">   
                                         <?=Yii::app()->createAbsoluteUrl(
@@ -44,13 +44,13 @@
                                                 'surveyid' => $sid
                                             ]
                                         )?>" class="btn btn-default" target="_blank"  >
-                                            Open Link <i class="fa fa-external-link"></i>
+                                            Link öffnen <i class="fa fa-external-link"></i>
                                         </a>
                                     </div>  
                                 </div>  
                                 <div class="list-group-item row"> 
                                     <div class="col-sm-4 col-xs-12 background-muted">   
-                                        Basic link (for non-logged in users)
+                                        Basislink (Für externe Benutzer)
                                     </div>  
                                     <div class="col-sm-6 col-xs-12">   
                                         <?=Yii::app()->createAbsoluteUrl(
@@ -73,7 +73,7 @@
                                                 'token' => $PS['token']
                                             ]
                                         )?>" class="btn btn-default" target="_blank"  >
-                                            Open Link <i class="fa fa-external-link"></i>
+                                            Link öffnen <i class="fa fa-external-link"></i>
                                         </a>
                                     </div>  
                                 </div>  
@@ -84,19 +84,19 @@
             <?php } else { ?>
                 <div class="row">
                     <div class="col-md-offset-2 col-md-8 col-sm-12 well jumbotron"> 
-                        <h4> Public statistic is only available for an activated survey! </h4>
+                        <h4> Die offene Statistik ist nur für aktivierte Umfragen verfügbar! </h4>
                     </div>  
                 </div>  
             <?php } ?>
             <div class="row">
                 <div class="col-md-6">     
                     <div class="panel panel-default">
-                        <div class="panel-heading"><h4>Basic settings</h4></div>
+                        <div class="panel-heading"><h4>Grundeinstellungen</h4></div>
                         <div class="panel-body form">
                             <div class="list-group">
                                 <div class="list-group-item row">    
                                     <div class="col-sm-6 col-xs-12">
-                                        <label>Activate public statistic for this survey?
+                                        <label>Offene statistik aktivieren?
                                     </div>
                                     <div class="col-sm-6 col-xs-12">
                                         <?php $this->widget(
@@ -114,7 +114,7 @@
                                 <div class="list-group-item row">    
                                     <div class="col-sm-6 col-xs-12">
                                         <label for="ps--token">
-                                            Set Token? (Leave empty for none)
+                                            Einen Zugangsschlüssel setzen? (Leer lassen für freien Zugang)
                                         </label>
                                     </div>
                                     <div class="col-sm-6 col-xs-12 input-group">
@@ -126,14 +126,14 @@
                                             class="form-control" 
                                         />
                                         <span class="input-group-addon" id="">
-                                            <button id="PS--action--generate-token" class="btn btn-xs btn-primary">Generate</button>
+                                            <button id="PS--action--generate-token" class="btn btn-xs btn-primary">Generieren</button>
                                         </span>
                                     </div>
                                 </div>
                                 <div class="list-group-item row">    
                                     <div class="col-sm-6 col-xs-12">
                                         <label for="ps--expire">
-                                            Set expiry date? (Leave empty for none)
+                                            Auslaufdatum für Zugriff setzen? (Leer lassen für unbeschränkt)
                                         </label>
                                     </div>
                                     <div class="col-sm-6 col-xs-12">
@@ -149,7 +149,7 @@
                                 <div class="list-group-item row">    
                                     <div class="col-sm-6 col-xs-12">
                                         <label for="ps--begin">
-                                            Set begin date? (Leave empty for none)
+                                            Startdatum für Zugriff setzen? (Leer lassen für unbeschränkt)
                                         </label>
                                     </div>
                                     <div class="col-sm-6 col-xs-12">
@@ -164,7 +164,7 @@
                                 <div class="list-group-item row">    
                                     <div class="col-sm-6 col-xs-12">
                                         <label for="ps--begin">
-                                        Use logins?
+                                        Logindaten festlegen?
                                         </label>
                                     </div>
                                     <div class="col-sm-6 col-xs-12">
@@ -186,12 +186,12 @@
                 </div>
                 <div class="col-md-6">     
                     <div class="panel panel-default">
-                        <div class="panel-heading"><h4>Additional settings</h4></div>
+                        <div class="panel-heading"><h4>Erweiterte Einstellungen</h4></div>
                         <div class="panel-body form">
                             <div class="list-group">
                                 <div class="list-group-item row">    
                                     <div class="col-sm-6 col-xs-12">
-                                        <label>Default visualisation</label>
+                                        <label>Standard Visualisierung</label>
                                     </div>
                                     <div class="col-sm-6 col-xs-12">
                                     <?php $this->widget(
@@ -200,10 +200,10 @@
                                             'name' => 'data[initialChartType]',
                                             'value'=> $data['initialChartType'] ,
                                             'selectOptions'=>array(
-                                                'bar' => 'Bar',
-                                                'pie' => 'Pie',
+                                                'bar' => 'Balken',
+                                                'pie' => 'Kuchen',
                                                 'doughnut' => 'Doughnut',
-                                                'line' => 'Line',
+                                                'line' => 'Linie',
                                             )
                                         )
                                     );?>
@@ -211,7 +211,7 @@
                                 </div>
                                 <div class="list-group-item row">    
                                     <div class="col-sm-6 col-xs-12">
-                                        <label for="PS--companyImage">Path to customer logo</label>
+                                        <label for="PS--companyImage">URL zum Kundenlogo</label>
                                     </div>
                                     <div class="col-sm-6 col-xs-12">
                                         <input type="text" class="form-control" id="PS--companyImage" name="data[companyImage]" rows="5" value="<?=$data['companyImage']?>" />
@@ -219,7 +219,7 @@
                                 </div>
                                 <div class="list-group-item row">    
                                     <div class="col-sm-6 col-xs-12">
-                                        <label for="PS--contactinformation--field">Contact to show on demand</label>
+                                        <label for="PS--contactinformation--field">Kontakt fürs Kontaktfeld</label>
                                         <textarea class="form-control" id="PS--contactinformation--field" name="data[contactinformation]"><?=$data['contactinformation']?></textarea>
                                     </div>
                                 </div>
@@ -233,7 +233,7 @@
             <div class="col-xs-12">
                 <div class="panel panel-default ">
                     <div class="panel-heading">
-                        Available logins
+                        Verfügbare Logindaten
                         <button class="btn btn-default btn-sm pull-right" id="ps--action--newRow">
                             <i class="fa fa-plus-circle"></i>
                         </button>
@@ -242,16 +242,16 @@
                         <table class="table" id="possiblelogintable">
                             <thead>
                                 <tr>
-                                    <th>Email address</th>
-                                    <th>Valid (from/to)</th>
-                                    <th>last login</th>
-                                    <th> Action  </th>
+                                    <th>E-Mail-Adresse</th>
+                                    <th>Gültig (von/bis)</th>
+                                    <th>Letzter Login</th>
+                                    <th> Aktion </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if(safecount($aLogins) == 0 ) { ?>
                                     <tr class="identifier--noinsertrow">
-                                        <td colspan="3"> None added yet </td>
+                                        <td colspan="3"> Keine Logindaten angelegt </td>
                                     </tr>
                                 <?php } else { 
                                     foreach($aLogins as $oLogin ) {    
@@ -291,25 +291,25 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Add new login</h4>
+                <h4 class="modal-title">Neuen Login hinzufügen</h4>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="newRowEmail">Email address</label>
+                    <label for="newRowEmail">E-mail-Adresse</label>
                     <input type="email" class="form-control" id="newRowEmail" placeholder="name@example.com">
                 </div>
                 <div class="form-group">
-                    <label for="newRowvalidfrom">Valid from (leave empty for unlimited)</label>
+                    <label for="newRowvalidfrom">Gültig ab (Leer lassen für unbeschränkt)</label>
                     <input type="date" class="form-control" id="newRowvalidfrom" >
                 </div>
                 <div class="form-group">
-                    <label for="newRowvalidtil">Valid until (leave empty for unlimited)</label>
+                    <label for="newRowvalidtil">Gültig bis (Leer lassen für unbeschränkt)</label>
                     <input type="date" class="form-control" id="newRowvalidtil" >
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" id="ps--action--saveNewRow" class="btn btn-primary">Save new login</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+                <button type="button" id="ps--action--saveNewRow" class="btn btn-primary">Neuen Login speichern</button>
             </div>
         </div>
     </div>

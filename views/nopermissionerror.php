@@ -23,8 +23,8 @@
         <br/>
         <br/>
         <div class="col-xs-12 jumbotron jumbotron-default well">
-            <h2>You have no permission to enter this page.</h2>
-            <p class="lead">If you think this is an error, please contact the person, that send you this link.</p>
+            <h2>Sie haben keine Berechtigung für diese Seite.</h2>
+            <p class="lead">Falls Sie überzeugt sind, dies ist ein fehler kontaktieren sie bitte die Person, von der Sie diesen Link haben.</p>
         </div>
       </div>
 
