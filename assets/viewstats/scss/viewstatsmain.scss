@@ -1,0 +1,27 @@
+
+body {
+    padding-top: 60px;
+}
+.PSarticlecontainer {
+    .navbar-header { 
+        height: 58px; 
+        img {
+            max-height: 36px; 
+        }
+    }
+}
+@page {
+    size: A4;
+    margin: 10mm;
+}
+
+@media print{
+    html, body {
+        width: 210mm;
+        height: 297mm;
+    }   
+    .selector--question-panel {
+        margin:0;
+        page-break-after: always;
+    }
+}

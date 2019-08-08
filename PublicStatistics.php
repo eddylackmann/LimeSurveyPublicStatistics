@@ -83,11 +83,13 @@ class PublicStatistics extends PluginBase {
         $token = $request->getPost('token', NULL);
         $expire = $request->getPost('expire', NULL);
         $begin = $request->getPost('begin', NULL);
+        $data = $request->getPost('data', []);
         
         $oSurvey->activated = $activated;
         $oSurvey->token = $token;
         $oSurvey->expire = $expire == '' ? null : $expire;
         $oSurvey->begin = $begin == '' ? null : $begin;
+        $oSurvey->data = json_encode($data);
 
 
         $oSurvey->save();
@@ -114,6 +116,7 @@ class PublicStatistics extends PluginBase {
         $email = $request->getPost('email');
         $begin = $request->getPost('begin');
         $expire = $request->getPost('expire');
+        $data = $request->getPost('data');
         $oLogin = new PSLogins();
         $oLogin->sid = $sid;
         $oLogin->email = $email;
@@ -129,11 +132,15 @@ class PublicStatistics extends PluginBase {
     }
 
     public function viewdirect($oEvent, $request) {
-        if (Yii::app()->user->isGuest){
+        if (Yii::app()->user->isGuest || $oEvent->getEventName() !== 'newDirectRequest'){
             return $this->renderPartial('nopermissionerror',[]);
         }
+        
         $sid = $request->getParam('surveyid');
-        $oSurvey = Survey::model()->findByPk($sid);
+        $oSurvey = PSSurveys::model()->findByPk($sid);
+        if ($oSurvey == null || $oSurvey->survey->active !== 'Y') {
+            return $this->errorSurveyNotActive();
+        }
         $oParser = new PSStatisticParser($sid);
         $aResponseDataList = $oParser->createParsedDataBlock();
         $output = $this->renderPartial(
@@ -141,16 +148,19 @@ class PublicStatistics extends PluginBase {
             array_merge(
                 $aResponseDataList, 
                 [
-                    'wordCloudSettings' => PSWordCloudSettings::getSettings()
+                    'theme' => $oSurvey->survey->template,
+                    'wordCloudSettings' => PSWordCloudSettings::getSettings(),
+                    'surveyData' => PSSurveyController::generateData($oSurvey->data)
                 ]
             ),
             true
         );
-        Yii::app()->getClientScript()->registerPackage('jquery');
-        Yii::app()->getClientScript()->registerPackage('bootstrap');
+
         Yii::app()->getClientScript()->registerPackage('jspdf');
-        $this->registerScript('assets/viewstats/build.min/main.css');
-        $this->registerScript('assets/viewstats/build/js/viewstats.js', null, LSYii_ClientScript::POS_END);
+        $oTemplate = Template::model()->getInstance($oSurvey->survey->template);
+        Yii::app()->getClientScript()->registerPackage($oTemplate->sPackageName, LSYii_ClientScript::POS_BEGIN);
+        $this->registerCss('assets/viewstats/build.min/css/main.css');
+        $this->registerScript('assets/viewstats/build.min/js/viewstats.js', null, LSYii_ClientScript::POS_END);
         Yii::app()->getClientScript()->render($output);
         echo $output;
         return;
@@ -161,6 +171,11 @@ class PublicStatistics extends PluginBase {
         $sid = $request->getParam('surveyid');
         $oSurvey = PSSurveys::model()->findByPk($sid);
 
+        if ($oSurvey == null || $oSurvey->survey->active !== 'Y') {
+            return $this->errorSurveyNotActive();
+        }
+
+        $oTemplate = Template::getInstance($oSurvey->survey->template);
         $token = $request->getParam('token', false);
 
         $email = $request->getPost('email', false);
@@ -168,22 +183,23 @@ class PublicStatistics extends PluginBase {
         
         Yii::app()->getClientScript()->registerPackage('jquery');
         Yii::app()->getClientScript()->registerPackage('bootstrap');
+        Yii::app()->clientScript->registerPackage($oTemplate->sPackageName, LSYii_ClientScript::POS_BEGIN);
 
-        if ($token != $oSurvey->token && $oSurvey->token != null && !$oSurvey->hasLogins ) {
-            return $this->renderPartial('nopermissionerror', []);
-        }
-
-        if ((($email == false && $password == false)
+        if (
+            ((($email == false && $password == false)
             || !PSLogins::verifyLogin($sid, $email, $password)) 
-            && $oSurvey->hasLogins 
+            && $oSurvey->hasLogins )
+            || ($token != $oSurvey->token && $oSurvey->token != null && !$oSurvey->hasLogins )
         ) {
+
             $output = $this->renderPartial(
                 'loginunsecure', 
                 [
-                    'surveyname' => $oSurvey->survey->correct_relation_defaultlanguage->surveyls_title,
+                    'oSurvey' => $oSurvey,
                     'formUrl' => Yii::app()->createUrl(
                         '/plugins/unsecure', 
                         [
+                            'theme' => $oSurvey->survey->template,
                             'plugin' => 'PublicStatistics',
                             'method' => 'viewunsecure',
                             'surveyid' => $sid
@@ -197,14 +213,54 @@ class PublicStatistics extends PluginBase {
             return;
         }
 
+        
+        
         $oParser = new PSStatisticParser($sid);
         $aResponseDataList = $oParser->createParsedDataBlock();
-        $output = $this->renderPartial('viewstats', $aResponseDataList, true);
-        $this->registerScript('assets/viewstats/build.min/main.css');
-        $this->registerScript('assets/viewstats/build/js/viewstats.js', null, LSYii_ClientScript::POS_END);
+        $output = $this->renderPartial(
+            'viewstats', 
+            array_merge(
+                $aResponseDataList, 
+                [
+                    'wordCloudSettings' => PSWordCloudSettings::getSettings(),
+                    'surveyData' => PSSurveyController::generateData($oSurvey->data)
+                ]
+            ),
+            true
+        );
+
+        Yii::app()->getClientScript()->registerPackage('jspdf');
+        $this->registerCss('assets/viewstats/build.min/css/main.css');
+        $this->registerScript('assets/viewstats/build.min/js/viewstats.js', null, LSYii_ClientScript::POS_END);
         Yii::app()->getClientScript()->render($output);
         echo $output;
         return;
+    }
+
+    public function deleteLoginRow($oEvent, $oRequest) {
+        $sid = $oRequest->getPost('sid');
+        $loginId = $oRequest->getPost('loginId');
+
+        $oLoginModel = PSLogins::model()->findByPk($loginId);
+
+        return $this->renderPartial('toJson', ['data'=>['success' => $oLoginModel->delete()]]);
+        
+    }
+
+    public function resetLoginPassword($oEvent, $oRequest) {
+        $sid = $oRequest->getPost('sid');
+        $loginId = $oRequest->getPost('loginId');
+
+        $oLoginModel = PSLogins::model()->findByPk($loginId);
+        $clearpass = $oLoginModel->generatePassword();
+        $this->_sendEmail($oLoginModel, $clearpass);
+
+        return $this->renderPartial('toJson', ['data'=>['success' => true, 'clearPass' => $clearpass]]);
+        
+    }
+    
+    private function errorSurveyNotActive() {
+        return $this->renderPartial('errorNotActive', []);
     }
 
     ##########################################################################################

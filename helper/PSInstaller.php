@@ -22,7 +22,8 @@ class PSInstaller {
                 'activated' => 'int DEFAULT 1',
                 'token' => 'string NULL DEFAULT NULL',
                 'begin' => 'datetime NULL DEFAULT NULL',
-                'expire' => 'datetime NULL DEFAULT NULL'
+                'expire' => 'datetime NULL DEFAULT NULL',
+                'data' => 'text NULL DEFAULT NULL'
             ));
             $oDB->createCommand()->createTable('{{PSLogins}}', array(
                 'id' => 'pk',
@@ -69,28 +70,9 @@ class PSInstaller {
             "addQuestionGroupId" => false,
             "addQuestionId" => false,
         ];
-        $aMenuSettings2 = [
-            "name" => 'publicstatsshow',
-            "title" => 'publicstatsshow',
-            "menu_title" => 'Public statistic - view',
-            "menu_description" => 'Open public statistics',
-            "menu_icon" => 'binoculars',
-            "menu_icon_type" => 'fontawesome',
-            "menu_link" => 'plugins/direct',
-            "permission" => 'surveytexts',
-            "permission_grade" => 'update',
-            "hideOnSurveyState" => false,
-            "linkExternal" => false,
-            "manualParams" => ['plugin' => 'PublicStatistics', 'method' => 'viewdirect'],
-            "pjaxed" => false,
-            "addSurveyId" => true,
-            "addQuestionGroupId" => false,
-            "addQuestionId" => false,
-        ];
 
         $oMenu = Surveymenu::model()->findByAttributes(['name' => 'mainmenu']);
-        return SurveymenuEntries::staticAddMenuEntry($oMenu->id, $aMenuSettings1)
-                && SurveymenuEntries::staticAddMenuEntry($oMenu->id, $aMenuSettings2);
+        return SurveymenuEntries::staticAddMenuEntry($oMenu->id, $aMenuSettings1);
     }
 
     public function removeTables() 

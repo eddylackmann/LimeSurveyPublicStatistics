@@ -1,13 +1,18 @@
 <template>
     <div class="panel panel-default selector--question-panel">
         <div class="panel-heading">
-            <h3 class="panel-title" v-html="renderQuestionHTML(question)" />
+            <h3 class="panel-title anchor--title" :id="`link-anchor--${question.fieldname}`" v-html="renderQuestionHTML(question)" />
         </div>
         <div class="panel-body">
             <div class="container-fluid">
                 <div class="row" v-if="isPlottable && !isOther">
                     <div class="container-center scoped-is-plotly-container" :id="'plotly--'+question.fieldname">
-                        <vue-plotly @autosize="correctHeight" :data="plotlyData" :layout="plotlyLayout" :options="plotlyConfig"/>
+                        <vue-plotly 
+                            @relayout="correctHeight('relayout')"
+                            :data="plotlyData" 
+                            :layout="plotlyLayout" 
+                            :options="plotlyConfig"
+                        />
                     </div>
                 </div>
                 <div class="row selector--buttonrow" v-if="isPlottable && !isOther">    
@@ -49,7 +54,7 @@
                     </div>
                 </div>
                 <div class="row" v-if="isTextType || isOther">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12 text-center">
                         <word-cloud
                             :wordlist="wordList"
                             :word-cloud-settings="wordCloudSettings"
@@ -58,10 +63,13 @@
                     </div>
                 </div>
                 <div class="row">
-                    <ul class="list-items">
+                    <div class="col-xs-12"><hr/></div>
+                </div>
+                <div class="row">
+                    <ul class="list-items scoped--noBorderRadius ">
                         <li 
                             v-for="(value,key) in filteredCalculations" :key="key"
-                            class="list-group-item col-md-6 col-sm-12"
+                            class="list-group-item scoped--noBorderRadius col-md-6 col-sm-12"
                         >
                             <div class="row">
                                 <div class="col-xs-8">{{key | keydescription}} <small>({{key}})</small></div>
@@ -86,6 +94,7 @@ export default {
   props: {
     question: {type: Object, required: true},
     wordCloudSettings: {type: Object, required: true},
+    initialChartType: {type: String, default: 'bar'}
   },
   data() {
       return {
@@ -150,8 +159,10 @@ export default {
       },
       plotlyLayout() {
           return {
-              title: '',
-              showLegend: false
+              title: this.uppercaseFirst(this.chartType+'-chart'),
+              legend: {
+                  x: 1,
+              }
           };
       },
       isOther() {
@@ -167,6 +178,9 @@ export default {
       }
     },
     methods: {
+        tellMetWhatYouDid(deed) {
+            console.log('I triggered ->', deed);
+        },
         correctHeight() {
             console.log('resize-called');
             $('#plotly--'+this.question.fieldname).height(
@@ -194,7 +208,13 @@ export default {
                 }
             });
             return wordsMap;
+        },
+        uppercaseFirst(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
         }
+    },
+    created() {
+        this.chartType = this.initialChartType;
     },
     filters: {
         keydescription(key) {
@@ -214,8 +234,15 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.scoped-is-plotly-container {
-    min-height: 25rem;
-}
+<style lang="scss" scoped>
+    .scoped-is-plotly-container {
+        min-height: 25rem;
+    }
+    .scoped--noBorderRadius {
+        border-radius: 0;
+    }
+    .anchor--title {
+        padding-top: 80px;
+        margin-top: -80px;
+    }
 </style>

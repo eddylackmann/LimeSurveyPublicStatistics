@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -17,26 +17,45 @@
                 <br/>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12 jumbotron jumbotron-default well">
-                <h2>You need to log in with the credentials sent to you: </h2>
-                <form action="<?=$formUrl?>" method="post" name="loginforPublicStatistics" class="form">
-                    <div class="row">
-                        <div class="form-group col-md-6 col-xs-12">
-                            <label for="email">Email address</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+        <?php if($oSurvey->hasLogins) { ?> 
+            <div class="row">
+                <div class="col-xs-12 jumbotron jumbotron-default well">
+                    <h2>You need to log in with the credentials sent to you: </h2>
+                    <form action="<?=$formUrl?>" method="post" name="loginforPublicStatistics" class="form">
+                        <div class="row">
+                            <div class="form-group col-md-6 col-xs-12">
+                                <label for="email">Email address</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                            </div>
+                            <div class="form-group col-md-6 col-xs-12">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password">
+                            </div>
+                            <div class="form-group col-xs-12">
+                                <input type="submit" class="btn btn-primary" id="submit" name="submit" value="Submit">
+                            </div>
                         </div>
-                        <div class="form-group col-md-6 col-xs-12">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password">
-                        </div>
-                        <div class="form-group col-xs-12">
-                            <input type="submit" class="btn btn-primary" id="submit" name="submit" value="Submit">
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
+        <?php } else { ?>
+            <div class="row">
+                <div class="col-xs-12 jumbotron jumbotron-default well">
+                    <h2>Please type in the participation token: </h2>
+                    <form action="<?=$formUrl?>" method="post" name="loginforPublicStatistics" class="form">
+                        <div class="row">
+                            <div class="form-group col-xs-12">
+                                <label for="email">Token</label>
+                                <input type="text" class="form-control" id="token" name="token" placeholder="Token">
+                            </div>
+                            <div class="form-group col-xs-12">
+                                <input type="submit" class="btn btn-primary" id="submit" name="submit" value="Submit">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        <?php } ?>
     </div>
 </body>
 

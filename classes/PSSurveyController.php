@@ -26,10 +26,34 @@ class PSSurveyController {
 
         return [
             'PS' => $oSurvey->attributes,
+            'isActive' => $oSurvey->survey->active=='Y',
             'sid' => $sid,
             'uselogins' => $oSurvey->hasLogins,
-            'aLogins' => $oSurvey->logins
+            'aLogins' => $oSurvey->logins,
+            'data' => self::generateData($oSurvey->data)
         ];
+    }
+
+    ########################
+
+    public static function generateData($dataField) {
+        $aDataArray = json_decode($dataField, true);
+        $aDataArray = $aDataArray == null ? [] : $aDataArray;
+
+        $aDataArray = array_merge( 
+            [
+                'companyImage' => "/themes/admin/Sea_Green/images/logo.png",
+                'contactinformation' => 'No contact set',
+                'groupByGroup' => false,
+                'preprenderWordClouds' => false,
+                'startColor' => false,
+                'endColor' => false,
+                'initialChartType' => 'bar'
+            ],
+            $aDataArray
+        );
+        
+        return $aDataArray;
     }
     
 }

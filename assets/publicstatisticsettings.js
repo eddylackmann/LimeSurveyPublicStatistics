@@ -34,16 +34,52 @@ var PublicStatisticsSettings = function(){
                 }
 
                 $('#possiblelogintable').find('tbody').append(rowHtml);
+                $('#newLoginFormModal').modal('hide');
             }
         });
        
     };
     var deleteRow = function() {
-
+        var loginId = $(this).data('loginid');
+        $.bsconfirm(
+            'Are you survey ou want to delete this login?',
+            {},
+            function(){
+                $.ajax({
+                    url: LS.createUrl('plugins/direct/plugin/PublicStatistics/method/deleteLoginRow'),
+                    method: 'POST',
+                    data: $.merge({
+                        sid: $('#currentSurveyId').val(),
+                        loginId: loginId,
+                    }, LS.data.csrfTokenData),
+                    success: function(data) {        
+                        $('#possiblelogintable').find('tbody').find('.ps--selector--row[data-loginid='+loginId+']').remove();
+                        $('#identity__bsconfirmModal').modal('hide');
+                    }
+                });
+            }
+        );
     };
     
     var resendPW = function() {
-
+        var loginId = $(this).data('loginid');
+        $.bsconfirm(
+            'Are you survey ou want to reset this logins password?',
+            {},
+            function(){
+                $.ajax({
+                    url: LS.createUrl('plugins/direct/plugin/PublicStatistics/method/resetLoginPassword'),
+                    method: 'POST',
+                    data: $.merge({
+                        sid: $('#currentSurveyId').val(),
+                        loginId: loginId,
+                    }, LS.data.csrfTokenData),
+                    success: function(data) { 
+                        $('#identity__bsconfirmModal').modal('hide');
+                     }
+                });
+            }
+        );
     };
     
     var toggleLogins = function() {

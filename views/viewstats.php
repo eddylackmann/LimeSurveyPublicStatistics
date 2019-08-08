@@ -9,14 +9,18 @@
     <title>LimeSurvey public statistics</title>
 </head>
 
-<body>
+<body class="<?=$theme?>">
     <div id="appmain">
         <app 
             :data='<?=json_encode($data)?>' 
             :questiongroups='<?=json_encode($questiongroups)?>' 
             :word-cloud-settings='<?=json_encode($wordCloudSettings)?>'
+            :surveydata='<?=json_encode($surveyData)?>'
         />
     </div>
+    <script type="text/json" id="debuggerJson">
+        <?=json_encode($questiongroups)?>
+    </script>
 </body>
 
 </html>

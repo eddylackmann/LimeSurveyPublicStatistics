@@ -1,41 +1,93 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <button class="btn btn-default pull-right" @click="exportToPDF">Export to pdf</button>
-                <div class="page-header">
-                    <h1>Public statistics for {{data.surveyname}}</h1>
+    <article class="PSarticlecontainer">
+        <nav class="navbar navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">
+                    <img :src="surveydata.companyImage" />
+                </a>
                 </div>
-                <hr/>
-                <p>
-                    This survey contains <b>{{data.questions}}</b> questions in <b>{{data.questiongroups}}</b> question groups.
-                </p>
-                <p>
-                    A total of <b>{{data.responses}}</b> responses have been collected.
-                </p>
+                <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#headline">Home</a></li>
+                    <li class="dropdown">
+                        <a 
+                            href="#" 
+                            class="dropdown-toggle" 
+                            data-toggle="dropdown" 
+                            role="button" 
+                            aria-haspopup="true" 
+                            aria-expanded="false"
+                        >
+                            Question list <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu scrollable-menu">
+                            <li v-for="(question, questionAnchor) in questionAnchors" :key="questionAnchor">
+                                <a :href="`#link-anchor--${questionAnchor}`" >{{question|forIndex}}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="#contact" @click="showContactData">Contact</a></li>
+                </ul>
+                </div><!--/.nav-collapse -->
             </div>
-        </div>
-        <div class="row loaderrow" v-show="loading">
-            <div id='loader' class=" loader--loaderWidget ls-flex ls-flex-column align-content-center align-items-center"
-                style="min-height: 100%;">
-                <div class="ls-flex align-content-center align-items-center">
-                    <div class="loader-public-statistic text-center">
-                        <div class="contain-pulse animate-pulse">
-                            <div class="square"></div>
-                            <div class="square"></div>
-                            <div class="square"></div>
-                            <div class="square"></div>
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="page-header">
+                        <h1>Public statistics for {{data.surveyname}}</h1>
+                    </div>
+                    <hr/>
+                    <p>
+                        This survey contains <b>{{data.questions}}</b> questions in <b>{{data.questiongroups}}</b> question groups.
+                    </p>
+                    <p>
+                        A total of <b>{{data.responses}}</b> responses have been collected.
+                    </p>
+                </div>
+            </div>
+            <div class="row loaderrow" v-show="loading">
+                <div id='loader' class=" loader--loaderWidget ls-flex ls-flex-column align-content-center align-items-center"
+                    style="min-height: 100%;">
+                    <div class="ls-flex align-content-center align-items-center">
+                        <div class="loader-public-statistic text-center">
+                            <div class="contain-pulse animate-pulse">
+                                <div class="square"></div>
+                                <div class="square"></div>
+                                <div class="square"></div>
+                                <div class="square"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <main-container :questiongroups="questiongroups" :word-cloud-settings="wordCloudSettings"/>
+            <div class="row">
+                <div class="col-xs-12">
+                    <main-container :questiongroups="questiongroups" :word-cloud-settings="wordCloudSettings" :printable="printable" :initial-chart-type="surveydata.initialChartType"/>
+                </div>
             </div>
         </div>
-    </div>
+        <div class="modal fade" id="PublicStatistic--contact-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Your contact:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <pre>{{surveydata.contactinformation | trim}}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
 </template>
 
 <script>
@@ -50,13 +102,31 @@ export default {
       data: {type: Object, required: true},
       questiongroups: {type: Object, required: true},
       wordCloudSettings: {type: Object, required: true},
+      surveydata: {type: Object, required: true},
   },
   data() {
       return {
-          loading: false
+          loading: false,
+          printable: false
       }
   },
+  computed: {
+        questionAnchors(){
+            return _.reduce(this.questiongroups, (coll, questions, gid) => {
+                _.forEach(questions, question => {
+                    coll[question.fieldname] = question.question;
+                 });
+                 return coll;
+            }, {});
+        }
+  },
   methods: {
+      showContactData(){
+          $('#PublicStatistic--contact-modal').modal('show');
+      },
+      togglePrintable() {
+          this.printable = !this.printable;
+      },
       exportToPDF() {
           this.loading = true;
           this.createPDFworker().then(
@@ -91,76 +161,97 @@ export default {
                     $('.selector--buttonrow').css('display','');
                     res('done');
                 }, function (reject) {
-                    rej(arguments);
+                    rej(reject);
                 });
             });
         }   
+    },
+    filters: {
+        trim(string) {
+            return string.trim();
+        },
+        forIndex(string) {
+            const tmp = document.createElement("DIV");
+            tmp.innerHTML = string;
+            let txtContent = tmp.textContent || tmp.innerText || "";
+            return txtContent.length > 35 ? txtContent.substr(0, 13)+'[...]' : txtContent;
+        }
     }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
-$size:2em;
-$color:#61a161;
+    .navbar-brand img{
+        height: 100%;
+        min-height: 3rem;
+    }
+    .scrollable-menu {
+        height: auto;
+        max-height: 50vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
 
-.loaderrow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 96vh;
-    width: 96vw;
-    padding: 2vh 2vw;
-    background: rgba(240,240,240,0.4);
-}
+    $size:2em;
+    $color:#61a161;
 
-.contain-pulse {
-  display: flex;
-  flex-flow:row wrap;
-  justify-content: center;
-  align-content:bottom;
-  height: $size+1;
-}
+    .loaderrow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 96vh;
+        width: 96vw;
+        padding: 2vh 2vw;
+        background: rgba(240,240,240,0.4);
+    }
 
-.square {
-  background: $color;
-  border-radius: 0.6em;
-  box-sizing: border-box;
-  height: $size;
-  margin: $size/10;
-  overflow: hidden;
-  padding: $size/4;
-  width: $size;
-}
+    .contain-pulse {
+        display: flex;
+        flex-flow:row wrap;
+        justify-content: center;
+        align-content:bottom;
+        height: $size+1;
+    }
 
-.animate-pulse {
-  .square:nth-of-type(1) {
-    animation: pulse ease-in-out 1.8s infinite 0.2s;
-  }
-  .square:nth-of-type(2) {
-    animation: pulse ease-in-out 1.8s infinite 0.6s;
-  }
-  .square:nth-of-type(3) {
-    animation: pulse ease-in-out 1.8s infinite 1.0s;
-  }
-  .square:nth-of-type(4) {
-    animation: pulse ease-in-out 1.8s infinite 1.4s;
-  }
-}
+    .square {
+        background: $color;
+        border-radius: 0.6em;
+        box-sizing: border-box;
+        height: $size;
+        margin: $size/10;
+        overflow: hidden;
+        padding: $size/4;
+        width: $size;
+    }
 
-@keyframes pulse {  
-  00.000% {
-    box-shadow: 0 0  1em $color;
-  }
-  50.000% {
-    box-shadow: 0 0 0.3em lighten($color,30%);
-    height: $size*0.5;
-    margin-top: $size*0.5;
-    opacity: 0.8;
-  }
-  100.00% {
-    box-shadow: 0 0 1em $color;
-  }
-  
-}
+    .animate-pulse {
+        .square:nth-of-type(1) {
+            animation: pulse ease-in-out 1.8s infinite 0.2s;
+        }
+        .square:nth-of-type(2) {
+            animation: pulse ease-in-out 1.8s infinite 0.6s;
+        }
+        .square:nth-of-type(3) {
+            animation: pulse ease-in-out 1.8s infinite 1.0s;
+        }
+        .square:nth-of-type(4) {
+            animation: pulse ease-in-out 1.8s infinite 1.4s;
+        }
+    }
+
+    @keyframes pulse {  
+        0% {
+            box-shadow: 0 0  1em $color;
+        }
+        50% {
+            box-shadow: 0 0 0.3em lighten($color,30%);
+            height: $size*0.5;
+            margin-top: $size*0.5;
+            opacity: 0.8;
+        }
+        100% {
+            box-shadow: 0 0 1em $color;
+        }
+    }
 </style>

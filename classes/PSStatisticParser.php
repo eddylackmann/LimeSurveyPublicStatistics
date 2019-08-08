@@ -522,11 +522,11 @@ class PSStatisticParser {
         foreach($arr as $itrt) {
 
             if (!$itrt) {
-                $result['empty'] = isset($result['empty']) ? $result['empty']+1 : 0;
+                $result[gT('No answer/Not shown')] = isset($result[gT('No answer/Not shown')]) ? $result[gT('No answer/Not shown')]+1 : 0;
                 continue;
             }
 
-            if (!isset($result[$itrt])) {
+            if (!isset($result[$this->_filterForDefaultString($itrt)])) {
                 $result[$itrt] = 0;
             }
 
@@ -583,6 +583,18 @@ class PSStatisticParser {
         }
 
         return $fVariance;
+    }
+
+    private function _filterForDefaultString($string) {
+        if(preg_match("/.*-oth.*/",$string)) {
+            return gT('Other');
+        }
+        switch(trim($string)) {
+            case 'Y': return gT('Yes');
+            case 'N': return gT('No');
+            case '-oth-': return gT('Other');
+            default: return $string;
+        }
     }
 
 }

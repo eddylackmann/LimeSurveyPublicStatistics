@@ -1,6 +1,6 @@
 <template>
     <div class="col-xs-12">
-        <div :id="wordcloudId" :style="{height: cloudHeight+'px', width: cloudWidth+'px'}" v-if="drawn">
+        <div :id="wordcloudId" class="container-center" :style="{height: cloudHeight+'px', width: cloudWidth+'px'}" v-if="drawn">
             <vuewordcloud
                 font-family="sans-serif"
                 rotation-unit="deg"
@@ -11,7 +11,9 @@
                 :rotation="rotateWords"
             />
         </div>
-        <div class="text-center" v-if="!drawn"><button class="btn btn-default" @click="drawWordCloud">Draw wordcloud</button></div>
+        <div class="text-center" v-if="!drawn">
+            <button class="btn btn-default" @click="drawWordCloud">Draw wordcloud</button>
+        </div>
     </div>
     
 </template>
@@ -40,8 +42,20 @@ export default {
     computed: {
         curatedWordList() { return _.slice(this.wordlist, 0, this.wordCloudSettings.wordCount) },
         wordcloudId() { return 'WordCloud--imagecontainer-'+this.fieldId },
-        cloudWidth() { return this.wordCloudSettings.cloudWidth },
-        cloudHeight() { return this.wordCloudSettings.cloudHeight },
+        cloudWidth() { 
+            let baseValue = this.wordCloudSettings.cloudWidth;
+            if((window.innerWidth-120) < baseValue) {
+                baseValue = Math.round(window.innerWidth*0.9);
+            }
+            return baseValue;
+        },
+        cloudHeight() { 
+            let baseValue = this.wordCloudSettings.cloudHeight;
+             if((window.innerWidth-120) < this.cloudWidth) {
+                baseValue = Math.round((this.cloudWidth/4)*3);
+            }
+            return baseValue;
+        },
         fontPadding() { return this.wordCloudSettings.fontPadding },
         wordAngle() { return this.wordCloudSettings.wordAngle },
         minFontSize() { return this.wordCloudSettings.minFontSize },
