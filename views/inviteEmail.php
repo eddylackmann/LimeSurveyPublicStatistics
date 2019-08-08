@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Einladung zur offenen Statistik</title>
+    <title>Simple Transactional Email</title>
     <style>
       /* -------------------------------------
           GLOBAL RESETS
@@ -333,7 +333,7 @@
     </style>
   </head>
   <body class="">
-    <span class="preheader">Sie wurden zur Ansicht der offenen Statistiken von "<?=$survey->currentLanguageSettings->surveyls_title?>" eingeladen.</span>
+    <span class="preheader">You are invited to join the public statistics of "<?=$survey->currentLanguageSettings->surveyls_title?>".</span>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
       <tr>
         <td>&nbsp;</td>
@@ -349,7 +349,7 @@
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                       <td>
-                        <p>Um zur Ansicht zu kommen klicken sie bitte hier:</p>
+                        <p>To see the statistics please click here:</p>
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                           <tbody>
                             <tr>
@@ -357,7 +357,7 @@
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                   <tbody>
                                     <tr>
-                                      <td> <a href="<?=$statisticsLink?>" target="_blank">Zur Statistik</a> </td>
+                                      <td> <a href="<?=$statisticsLink?>" target="_blank">To statistics</a> </td>
                                     </tr>
                                   </tbody>
                                 </table>
@@ -366,12 +366,12 @@
                           </tbody>
                         </table>
                         <hr/>
-                        <p> Ihr Passwort ist: <?=$password?> </p>
+                        <p> Your password is: <?=$password?> </p>
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <p>Falls der Button weiter oben nicht funktioniert hat, kopieren sie diese URL in die Addressleiste in Ihrem Browser:</p>
+                        <p>If the above button did not work, please copy the following link and paste it into your browser.</p>
                         <p><?=$statisticsLink?></p>
                       </td>
                     </tr>

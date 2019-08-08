@@ -15,7 +15,7 @@
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#root-anchor">Home</a></li>
+                    <li class="active"><a href="#headline">Home</a></li>
                     <li class="dropdown">
                         <a 
                             href="#" 
@@ -25,7 +25,7 @@
                             aria-haspopup="true" 
                             aria-expanded="false"
                         >
-                            Fragenliste <span class="caret"></span>
+                            Question list <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu scrollable-menu">
                             <li v-for="(question, questionAnchor) in questionAnchors" :key="questionAnchor">
@@ -33,7 +33,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li><a href="#contact" @click="showContactData">Kontakt</a></li>
+                    <li><a href="#contact" @click="showContactData">Contact</a></li>
                 </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -42,14 +42,14 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="page-header">
-                        <h1 id="root-anchor">Offene statistics für {{data.surveyname}}</h1>
+                        <h1>Public statistics for {{data.surveyname}}</h1>
                     </div>
                     <hr/>
                     <p>
-                        Diese Umfrage enthält <b>{{data.questions}}</b> Fragen in <b>{{data.questiongroups}}</b> Fragegruppen.
+                        This survey contains <b>{{data.questions}}</b> questions in <b>{{data.questiongroups}}</b> question groups.
                     </p>
                     <p>
-                        Insgesamt wurden <b>{{data.responses}}</b> Antworten gesammelt.
+                        A total of <b>{{data.responses}}</b> responses have been collected.
                     </p>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Ihr Kontakt:</h4>
+                        <h4 class="modal-title">Your contact:</h4>
                     </div>
                     <div class="modal-body">
                         <pre>{{surveydata.contactinformation | trim}}</pre>
