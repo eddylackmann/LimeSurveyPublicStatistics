@@ -117,7 +117,7 @@
                                             Set Token? (Leave empty for none)
                                         </label>
                                     </div>
-                                    <div class="col-sm-6 col-xs-12">
+                                    <div class="col-sm-6 col-xs-12 input-group">
                                         <input 
                                             type="text" 
                                             id="ps--token" 
@@ -125,6 +125,9 @@
                                             value="<?=$PS['token']?>"
                                             class="form-control" 
                                         />
+                                        <span class="input-group-addon" id="">
+                                            <button id="PS--action--generate-token" class="btn btn-xs btn-primary">Generate</button>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="list-group-item row">    

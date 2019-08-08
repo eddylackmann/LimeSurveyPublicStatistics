@@ -186,10 +186,18 @@ class PublicStatistics extends PluginBase {
         Yii::app()->clientScript->registerPackage($oTemplate->sPackageName, LSYii_ClientScript::POS_BEGIN);
 
         if (
-            ((($email == false && $password == false)
-            || !PSLogins::verifyLogin($sid, $email, $password)) 
-            && $oSurvey->hasLogins )
-            || ($token != $oSurvey->token && $oSurvey->token != null && !$oSurvey->hasLogins )
+            (
+               (
+                   ($email == false && $password == false) 
+                   || !PSLogins::verifyLogin($sid, $email, $password)
+               ) 
+               && $oSurvey->hasLogins 
+            )
+            || (
+               $token !== $oSurvey->token 
+               && $oSurvey->token != null 
+               && !$oSurvey->hasLogins 
+            )
         ) {
 
             $output = $this->renderPartial(
@@ -199,7 +207,6 @@ class PublicStatistics extends PluginBase {
                     'formUrl' => Yii::app()->createUrl(
                         '/plugins/unsecure', 
                         [
-                            'theme' => $oSurvey->survey->template,
                             'plugin' => 'PublicStatistics',
                             'method' => 'viewunsecure',
                             'surveyid' => $sid
@@ -222,6 +229,7 @@ class PublicStatistics extends PluginBase {
             array_merge(
                 $aResponseDataList, 
                 [
+                    'theme' => $oSurvey->survey->template,
                     'wordCloudSettings' => PSWordCloudSettings::getSettings(),
                     'surveyData' => PSSurveyController::generateData($oSurvey->data)
                 ]

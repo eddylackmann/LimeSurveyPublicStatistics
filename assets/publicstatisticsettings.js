@@ -90,8 +90,28 @@ var PublicStatisticsSettings = function(){
         }
     };
 
+    var secureMathRandom = function () {
+        if(typeof window.crypto != 'function' ) {
+            //Unsecure fallback, but fu IE10
+            return Math.random();
+        }
+        // Divide a random UInt32 by the maximum value (2^32 -1) to get a result between 0 and 1
+        return window.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
+      }
+
+    var generateToken = function(e) {
+        e.preventDefault();
+        var characters = 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9'.split(' ');
+        var randomToken = "";
+        for(var i=0;i<8;i++) {
+            randomToken += ""+characters[Math.round(secureMathRandom()*characters.length)];
+        }
+        $('#ps--token').val(randomToken);
+    }
+
 
     var bind = function() {
+        $('#PS--action--generate-token').on('click', generateToken);
         $('#ps--action--newRow').on('click', newRow);
         $('#ps--action--saveNewRow').on('click', saveNewRow);
         $('#possiblelogintable').on('click', '.action--resetPassword', resendPW);
