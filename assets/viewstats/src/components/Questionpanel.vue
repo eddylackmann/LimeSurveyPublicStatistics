@@ -193,7 +193,8 @@ export default {
         getLabelFromAnswers(key) {
             if(this.question.answeroptions === undefined) { return key; }
             const answerObject = _.find(this.question.answeroptions, (answeroption) => answeroption.code == key);
-            return answerObject != undefined ? answerObject.answer : key;
+            
+            return answerObject != undefined && answerObject.answer.trim() != '' ? answerObject.answer : key;
         },
         createWordMap(wordsArray) {
             // create map for word counts

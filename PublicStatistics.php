@@ -131,28 +131,44 @@ class PublicStatistics extends PluginBase {
 
     }
 
+    public function getDataDirect($oEvent, $request) {
+        if (Yii::app()->user->isGuest || $oEvent->getEventName() !== 'newDirectRequest'){
+            return $this->renderPartial('toJson', ['data'=>[]]);
+        }
+        $sid = $request->getParam('surveyid');
+
+        $oParser = new PSStatisticParser($sid);
+        $aResponseDataList = $oParser->createParsedDataBlock();
+
+        return $this->renderPartial('toJson', ['data'=>$aResponseDataList]);
+    }
+
     public function viewdirect($oEvent, $request) {
         if (Yii::app()->user->isGuest || $oEvent->getEventName() !== 'newDirectRequest'){
             return $this->renderPartial('nopermissionerror',[]);
         }
         
         $sid = $request->getParam('surveyid');
+
         $oSurvey = PSSurveys::model()->findByPk($sid);
         if ($oSurvey == null || $oSurvey->survey->active !== 'Y') {
             return $this->errorSurveyNotActive();
         }
-        $oParser = new PSStatisticParser($sid);
-        $aResponseDataList = $oParser->createParsedDataBlock();
         $output = $this->renderPartial(
             'viewstats', 
-            array_merge(
-                $aResponseDataList, 
-                [
-                    'theme' => $oSurvey->survey->template,
-                    'wordCloudSettings' => PSWordCloudSettings::getSettings(),
-                    'surveyData' => PSSurveyController::generateData($oSurvey->data)
-                ]
-            ),
+            [
+                'getDataUrl' => Yii::app()->createUrl(
+                    'plugins/direct', 
+                    [
+                        "plugin" => "PublicStatistics",
+                        'method' => "getDataDirect",
+                        'surveyid' => $sid
+                    ]
+                ),
+                'theme' => $oSurvey->survey->template,
+                'wordCloudSettings' => PSWordCloudSettings::getSettings(),
+                'surveyData' => PSSurveyController::generateData($oSurvey->data)
+            ],
             true
         );
 
@@ -160,10 +176,43 @@ class PublicStatistics extends PluginBase {
         $oTemplate = Template::model()->getInstance($oSurvey->survey->template);
         Yii::app()->getClientScript()->registerPackage($oTemplate->sPackageName, LSYii_ClientScript::POS_BEGIN);
         $this->registerCss('assets/viewstats/build.min/css/main.css');
-        $this->registerScript('assets/viewstats/build.min/js/viewstats.js', null, LSYii_ClientScript::POS_END);
+        $this->registerScript('assets/viewstats/build/js/viewstats.js', null, LSYii_ClientScript::POS_END);
         Yii::app()->getClientScript()->render($output);
         echo $output;
         return;
+    }
+
+    public function getDataUnsecure($oEvent, $request) {
+
+        $sid = $request->getParam('surveyid');
+        $timeCheckParam = $request->getParam('timecheck');
+        
+        $cookienameCheck = 'LS'.hash('adler32', $sid.'secureHash');
+        $cookienameSid = 'LS'.hash('adler32', $sid.'currentSID');
+
+        $timecheck = isset($_COOKIE[$cookienameCheck]) ? $_COOKIE[$cookienameCheck] : null ;
+        $sidcheck = isset($_COOKIE[$cookienameSid]) ? $_COOKIE[$cookienameSid] : null ;
+     
+        $token = $request->getParam('token');
+        $oSurvey = PSSurveys::model()->findByPk($sid);
+
+        if (($timecheck == null ||  $sidcheck == null)
+            && ($timecheck != $timeCheckParam || $sid != $sidcheck)
+        ) {
+            return $this->renderPartial('toJson', ['data'=>['data' => [], 'questiongroups' => []]]);
+        }
+   
+        if (
+            $oSurvey == null 
+            || ($token !== $oSurvey->token && $oSurvey->token != null)
+        ) {
+            return $this->renderPartial('toJson', ['data'=>['data' => [], 'questiongroups' => []]]);
+        }
+
+        $oParser = new PSStatisticParser($sid);
+        $aResponseDataList = $oParser->createParsedDataBlock();
+
+        return $this->renderPartial('toJson', ['data'=>$aResponseDataList]);
     }
 
     public function viewunsecure($oEvent, $request) {
@@ -174,6 +223,13 @@ class PublicStatistics extends PluginBase {
         if ($oSurvey == null || $oSurvey->survey->active !== 'Y') {
             return $this->errorSurveyNotActive();
         }
+
+        $randomToken = crypt( date('YHM'), Yii::app()->getConfig('sitename') );
+
+        // setcookie('LS'.hash('adler32', $sid.'secureHash'), $randomToken, 0, '/', $_SERVER['SERVER_NAME'], true);
+        // setcookie('LS'.hash('adler32', $sid.'currentSID'), $sid, 0, '/', $_SERVER['SERVER_NAME'], true);
+        setcookie('LS'.hash('adler32', $sid.'secureHash'), $randomToken, ($_SERVER['REQUEST_TIME']+5*60), '/', "", true);
+        setcookie('LS'.hash('adler32', $sid.'currentSID'), $sid, ($_SERVER['REQUEST_TIME']+5*60), '/', "", true);
 
         $oTemplate = Template::getInstance($oSurvey->survey->template);
         $token = $request->getParam('token', false);
@@ -226,20 +282,27 @@ class PublicStatistics extends PluginBase {
         $aResponseDataList = $oParser->createParsedDataBlock();
         $output = $this->renderPartial(
             'viewstats', 
-            array_merge(
-                $aResponseDataList, 
-                [
-                    'theme' => $oSurvey->survey->template,
-                    'wordCloudSettings' => PSWordCloudSettings::getSettings(),
-                    'surveyData' => PSSurveyController::generateData($oSurvey->data)
-                ]
-            ),
+            [
+                'getDataUrl' => Yii::app()->createUrl(
+                    'plugins/unsecure', 
+                    [
+                        "plugin" => "PublicStatistics",
+                        'method' => "getDataUnsecure",
+                        'surveyid' => $sid,
+                        'timecheck' => $randomToken,
+                        'token' => $oSurvey->token
+                    ]
+                ),
+                'theme' => $oSurvey->survey->template,
+                'wordCloudSettings' => PSWordCloudSettings::getSettings(),
+                'surveyData' => PSSurveyController::generateData($oSurvey->data)
+            ],
             true
         );
 
         Yii::app()->getClientScript()->registerPackage('jspdf');
         $this->registerCss('assets/viewstats/build.min/css/main.css');
-        $this->registerScript('assets/viewstats/build.min/js/viewstats.js', null, LSYii_ClientScript::POS_END);
+        $this->registerScript('assets/viewstats/build/js/viewstats.js', null, LSYii_ClientScript::POS_END);
         Yii::app()->getClientScript()->render($output);
         echo $output;
         return;

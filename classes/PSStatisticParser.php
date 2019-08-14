@@ -107,7 +107,7 @@ class PSStatisticParser {
 
     private function _parse_list_dropdown($oQuestion) {
         $aQuestionData = [];
-        $aAnswers = array_map( function($oA) { return $oA->attributes; }, $oQuestion->answers);
+        $aAnswers = $this->getAnsweroptionBlock($oQuestion);
 
         $baseFieldname = "{$oQuestion->sid}X{$oQuestion->gid}X{$oQuestion->qid}";
         $aQuestionData[$baseFieldname] = [
@@ -139,7 +139,7 @@ class PSStatisticParser {
 
     private function _parse_list_with_comment($oQuestion) {
         $aQuestionData = [];
-        $aAnswers = $oQuestion->answers;
+        $aAnswers = $this->getAnsweroptionBlock($oQuestion);
 
         $baseFieldname = "{$oQuestion->sid}X{$oQuestion->gid}X{$oQuestion->qid}";
         $aQuestionData[$baseFieldname] = [
@@ -170,7 +170,7 @@ class PSStatisticParser {
 
     private function _parse_to_base($oQuestion) {
         $aQuestionData = [];
-        $aAnswers = $oQuestion->answers;
+        $aAnswers = $this->getAnsweroptionBlock($oQuestion);
 
         $baseFieldname = "{$oQuestion->sid}X{$oQuestion->gid}X{$oQuestion->qid}";
         $aQuestionData[$baseFieldname] = [
@@ -189,7 +189,7 @@ class PSStatisticParser {
 
     private function _parse_array_multi_flex($oQuestion) {
         $aQuestionData = [];
-        $aAnswers = $oQuestion->answers;
+        $aAnswers = $this->getAnsweroptionBlock($oQuestion);
 
         $aSubquestions = $oQuestion->subquestions;
         uasort(
@@ -236,7 +236,7 @@ class PSStatisticParser {
 
     private function _parse_array_multiscale($oQuestion) {
         $aQuestionData = [];
-        $aAnswers = $oQuestion->answers;
+        $aAnswers = $this->getAnsweroptionBlock($oQuestion);
 
         $aSubquestions = $oQuestion->subquestions;
         uasort(
@@ -278,7 +278,7 @@ class PSStatisticParser {
 
     private function _parse_ranking($oQuestion) {
         $aQuestionData = [];
-        $aAnswers = $oQuestion->answers;
+        $aAnswers = $this->getAnsweroptionBlock($oQuestion);
 
         $answersCount = intval(
             Answer::model()->countByAttributes(
@@ -350,8 +350,8 @@ class PSStatisticParser {
         );
         foreach ($aSubquestions as $oSubquestion) {
             $fieldname = "{$oQuestion->sid}X{$oQuestion->gid}X{$oQuestion->qid}{$oSubquestion->title}";
-            $aQuestionData[$baseFieldname] = [
-                "fieldname"=>$baseFieldname, 
+            $aQuestionData[$fieldname] = [
+                "fieldname"=>$fieldname, 
                 "question"=>$oQuestion->question.'| '.$oSubquestion->question,
                 'type'=>$oQuestion->type,
                 'sid'=>$oQuestion->sid,
@@ -453,7 +453,7 @@ class PSStatisticParser {
                 return $oQuestionA->question_order < $oQuestionB->question_order ? -1 : 1;
             }
         );
-        $aAnswers = $oQuestion->answers;
+        $aAnswers = $this->getAnsweroptionBlock($oQuestion);
 
         foreach ($aSubquestions as $oSubquestion) {
             $fieldname = "{$oQuestion->sid}X{$oQuestion->gid}X{$oQuestion->qid}{$oSubquestion->title}";
@@ -583,6 +583,15 @@ class PSStatisticParser {
         }
 
         return $fVariance;
+    }
+
+    private function getAnsweroptionBlock($oQuestion) {
+        $aAnswers = array_map( function($oA) { return $oA->attributes; }, $oQuestion->answers);
+        usort($aAnswers, function($a, $b){
+            return $a['sortorder'] < $b['sortorder'] ? -1 : 1;
+        });
+
+        return $aAnswers;
     }
 
     private function _filterForDefaultString($string) {
