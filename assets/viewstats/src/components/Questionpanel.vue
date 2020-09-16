@@ -155,7 +155,7 @@ export default {
                         type: 'line',
                     }];
             }
-          
+            return [];
       },
       plotlyLayout() {
           return {

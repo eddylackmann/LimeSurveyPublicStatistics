@@ -144,7 +144,7 @@ export default {
               }
           ).finally( ()=> {this.loading = false;});
         },
-        createPDFworker () {
+        /*createPDFworker () {
             const aElementArray = $('.selector--question-panel');
             return new Promise(function (res, rej) {
                 $('.selector--buttonrow').css('display','none');
@@ -173,7 +173,7 @@ export default {
                     rej(reject);
                 });
             });
-        }   
+        }  */ 
     },
     filters: {
         trim(string) {
