@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <metadata>
+        <name>PublicStatistics</name>
+        <type>plugin</type>
+        <creationDate>2019-03-10</creationDate>
+        <lastUpdate>2020-09-17</lastUpdate>
+        <author>Markus Fluer,LimeSurvey Team</author>
+        <authorUrl>https://limesurvey.org</authorUrl>
+        <version>1.2.0</version>
+        <license>GNU General Public License version 2 or later</license>
+        <description><![CDATA[Allow either sharing of statistics with a link, a one time token, or with email and password.]]></description>
+        <supportUrl>https://www.limesurvey.org</supportUrl>
+    </metadata>
+    <compatibility>
+        <version>4.0</version>
+ 	    <version>3.0</version>
+    </compatibility>
+    <updaters>
+          <updaters disabled="disabled">
+    </updaters>
+</config>
