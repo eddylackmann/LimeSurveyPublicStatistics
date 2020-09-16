@@ -1,18 +1,20 @@
 <?php
-class PSInstaller {
+class PSInstaller
+{
 
-    private static $model=null;
+    private static $model = null;
 
-    public static function model() {
-        
-        if(self::$model == null) {
+    public static function model()
+    {
+
+        if (self::$model == null) {
             self::$model = new self();
         }
 
         return self::$model;
     }
 
-    public function installTables() 
+    public function installTables()
     {
         $oDB = Yii::app()->db;
         $oTransaction = $oDB->beginTransaction();
@@ -50,7 +52,7 @@ class PSInstaller {
         }
     }
 
-    public function installMenues() 
+    public function installMenues()
     {
         $aMenuSettings1 = [
             "name" => 'publicstatssettings',
@@ -75,7 +77,7 @@ class PSInstaller {
         return SurveymenuEntries::staticAddMenuEntry($oMenu->id, $aMenuSettings1);
     }
 
-    public function removeTables() 
+    public function removeTables()
     {
         $oDB = Yii::app()->db;
         $oTransaction = $oDB->beginTransaction();
@@ -91,11 +93,9 @@ class PSInstaller {
         }
     }
 
-    public function removeMenues() 
+    public function removeMenues()
     {
-        $oSuerveymenuEntry1 = SurveymenuEntries::model()->findByAttributes(['name' => 'slssettings']);
-        $oSuerveymenuEntry2 = SurveymenuEntries::model()->findByAttributes(['name' => 'slsshow']);
-        return $oSuerveymenuEntry1->delete() && $oSuerveymenuEntry2->delete();
+        $oSuerveymenuEntry = SurveymenuEntries::model()->findByAttributes(['name' => 'publicstatssettings']);
+        return $oSuerveymenuEntry->delete();
     }
-
 }
