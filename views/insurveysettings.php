@@ -302,7 +302,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo  PSTranslator::translate("Close") ?></button>
-                <button type="button" id="ps--action--saveNewRow" class="btn btn-primary"><?php echo  PSTranslator::translate("Save new login") ?></button>
+                <button type="button" id="ps--action--saveNewRow" class="btn btn-primary"><?php echo  PSTranslator::translate("Save") ?></button>
             </div>
         </div>
     </div>

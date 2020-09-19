@@ -57,9 +57,9 @@ class PSInstaller
         $aMenuSettings1 = [
             "name" => 'publicstatssettings',
             "title" => 'publicstatssettings',
-            "menu_title" => 'Public statistic - settings',
-            "menu_description" => 'Settings for this surveys public statistic',
-            "menu_icon" => 'gears',
+            "menu_title" => PSTranslator::translate('Public Statistics - Settings'),
+            "menu_description" =>  PSTranslator::translate('Settings for this surveys public statistic'),
+            "menu_icon" => 'line-chart',
             "menu_icon_type" => 'fontawesome',
             "menu_link" => 'admin/pluginhelper/sa/sidebody',
             "permission" => 'surveysecurity',

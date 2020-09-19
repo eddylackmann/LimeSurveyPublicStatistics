@@ -162,6 +162,32 @@ class PSTranslator
                 "de" => "Noch keine hinzugefügt"
             ],
 
+            "Save" => [
+                "en" => "Save",
+                "de" => "Speichern"
+            ],
+
+            "Close" => [
+                "en" => "Close",
+                "de" => "Schließen"
+            ],
+            
+            "Valid from (leave empty for unlimited)" => [
+                "en" => "Valid from (leave empty for unlimited)",
+                "de" => "Gültig ab (Leer lassen für keine Einschränkung)"
+            ],
+
+            "Valid until (leave empty for unlimited)" => [
+                "en" => "Valid until (leave empty for unlimited)",
+                "de" => "Gültig bis (Leer lassen für keine Einschränkung)"
+            ],
+            "Add new login" => [
+                "en" => "Add new login",
+                "de" => "Neue Anmeldedaten hinzufügen"
+            ],
+
+            
+
         ];
 
         return $translations;
