@@ -43,7 +43,7 @@ class PSSurveyController {
         $aDataArray = array_merge( 
             [
                 'companyImage' => "/themes/admin/Sea_Green/images/logo.png",
-                'contactinformation' => 'No contact set',
+                'contactinformation' => PSTranslator::translate('No contact set'),
                 'groupByGroup' => false,
                 'preprenderWordClouds' => false,
                 'startColor' => false,

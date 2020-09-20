@@ -2,23 +2,27 @@
 
 class PSTranslator
 {
-    const DEFAULT_PLUGIN_LNG = 'en';
+
+    const DEFAULT_LNG = 'en';
+
+    public static $availableLanguages = ["en","de","fr"];
 
     public static function translate($original, $lng = '')
     {
-        $lng = $lng != "" ? $lng : Yii::app()->getConfig("defaultlang");
+        $lng = $lng != "" ? $lng : App()->language;
 
-        //retrieve all translations
+        //Retrieve all translations
         $translations = self::translations();
 
         $translated = $original;
+
         if ($translations[$original]) {
 
             if (isset($translations[$original][$lng])) {
                 $translated = $translations[$original][$lng];
             } else {
-                if (isset($translations[$original][self::DEFAULT_PLUGIN_LNG])) {
-                    $translated = $translations[$original][self::DEFAULT_PLUGIN_LNG];
+                if (isset($translations[$original][self::DEFAULT_LNG])) {
+                    $translated = $translations[$original][self::DEFAULT_LNG];
                 }
             }
         }
@@ -27,7 +31,9 @@ class PSTranslator
     }
 
     /**
+     * This method returns all Translations 
      * 
+     * @return array translations
      */
     public static function getAllTranslations()
     {
@@ -36,7 +42,9 @@ class PSTranslator
 
 
     /**
+     * Contains all translation available for the plugin
      * 
+     * @return array of translation
      */
     private static function translations()
     {
@@ -44,13 +52,15 @@ class PSTranslator
 
             "Public Statistics - Settings" => [
                 "en" => "Public Statistics - Settings",
-                "de" => "Öffentliche Statistik - Einstellung"
+                "de" => "Öffentliche Statistik - Einstellung",
+                "fr" => "Statistiques publiques - Paramètres"
 
             ],
 
             "Shareable links" => [
                 "en" => "Shareable links",
-                "de" => "Öffentliche Links"
+                "de" => "Öffentliche Links",
+                "fr" => "Liens de partage"
             ],
 
             "Save settings" => [
