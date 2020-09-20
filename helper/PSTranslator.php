@@ -274,7 +274,7 @@ class PSTranslator
             "No contact set" => [
                 "en" => "No contact set",
                 "de" => "Keine Information ",
-                "fr" => "Pas d'information"
+                "fr" => "Aucune information"
             ],
 
             "Generate" => [

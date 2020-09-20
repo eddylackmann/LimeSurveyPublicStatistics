@@ -49,7 +49,7 @@
                                                         'surveyid' => $sid
                                                     ]
                                                 ) ?>" class="btn btn-default" target="_blank">
-                                        <?php echo  PSTranslator::translate("Open Link") ?><i class="fa fa-external-link"></i>
+                                        <?php echo  PSTranslator::translate("Open Link")." " ?><i class="fa fa-external-link"></i>
                                     </a>
                                 </div>
                             </div>
