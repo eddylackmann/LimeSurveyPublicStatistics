@@ -23,8 +23,8 @@
         <br/>
         <br/>
         <div class="col-xs-12 jumbotron jumbotron-default well">
-            <h2>This statistic is not yet available.</h2>
-            <p class="lead">If you think this is an error, please contact the person, that send you this link.</p>
+            <h2><?php echo  PSTranslator::translate("This statistic is not yet available.")?></h2>
+            <p class="lead"><?php echo  PSTranslator::translate("If you think this is an error, please contact the person, that send you this link.")?></p>
         </div>
       </div>
 

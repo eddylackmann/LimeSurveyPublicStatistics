@@ -181,13 +181,46 @@ class PSTranslator
                 "en" => "Valid until (leave empty for unlimited)",
                 "de" => "Gültig bis (Leer lassen für keine Einschränkung)"
             ],
+
             "Add new login" => [
                 "en" => "Add new login",
                 "de" => "Neue Anmeldedaten hinzufügen"
             ],
 
-            
+            "Please type in the participation token:" => [
+                "en" => "Please type in the participation token:",
+                "de" => "Bitte geben Sie den Teilnahme-Token ein:"
+            ],
 
+            "Submit" => [
+                "en" => "Submit",
+                "de" => "Senden"
+            ],
+
+            "Password" => [
+                "en" => "Password",
+                "de" => "Passwort"
+            ],
+
+            "You need to log in with the credentials sent to you:" => [
+                "en" => "You need to log in with the credentials sent to you:",
+                "de" => "Bitte geben Sie die Zugangsdaten ein die wir Ihnen per E-Mail versendet haben:"
+            ],
+
+            "You have no permission to enter this page." => [
+                "en" => "You have no permission to enter this page.",
+                "de" => "Sie haben keine Berechtigung, diese Seite zu betreten."
+            ],
+
+            "If you think this is an error, please contact the person, that send you this link." => [
+                "en" => "If you think this is an error, please contact the person, that send you this link.",
+                "de" => "Wenn Sie glauben, dass dies ein Fehler ist, wenden Sie sich bitte an die Person, die Ihnen diesen Link gesendet hat."
+            ],
+
+            "This statistic is not yet available." => [
+                "en" => "This statistic is not yet available.",
+                "de" => "Diese Statistik ist noch nicht verfügbar."
+            ],
         ];
 
         return $translations;

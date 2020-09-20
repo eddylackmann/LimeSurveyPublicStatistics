@@ -13,26 +13,26 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <br/>
-                <br/>
+                <br />
+                <br />
             </div>
         </div>
-        <?php if($oSurvey->hasLogins) { ?> 
+        <?php if ($oSurvey->hasLogins) { ?>
             <div class="row">
                 <div class="col-xs-12 jumbotron jumbotron-default well">
-                    <h2>You need to log in with the credentials sent to you: </h2>
-                    <form action="<?=$formUrl?>" method="post" name="loginforPublicStatistics" class="form">
+                    <h2><?php echo  PSTranslator::translate("You need to log in with the credentials sent to you:") ?> </h2>
+                    <form action="<?= $formUrl ?>" method="post" name="loginforPublicStatistics" class="form">
                         <div class="row">
                             <div class="form-group col-md-6 col-xs-12">
-                                <label for="email">Email address</label>
+                                <label for="email"><?php echo  PSTranslator::translate("Email address") ?></label>
                                 <input type="email" class="form-control" id="email" name="email" placeholder="Email">
                             </div>
                             <div class="form-group col-md-6 col-xs-12">
-                                <label for="password">Password</label>
+                                <label for="password"><?php echo  PSTranslator::translate("Password") ?></label>
                                 <input type="password" class="form-control" id="password" name="password">
                             </div>
                             <div class="form-group col-xs-12">
-                                <input type="submit" class="btn btn-primary" id="submit" name="submit" value="Submit">
+                                <input type="submit" class="btn btn-primary" id="submit" name="submit" value="<?php echo  PSTranslator::translate("Submit") ?>">
                             </div>
                         </div>
                     </form>
@@ -41,15 +41,15 @@
         <?php } else { ?>
             <div class="row">
                 <div class="col-xs-12 jumbotron jumbotron-default well">
-                    <h2>Please type in the participation token: </h2>
-                    <form action="<?=$formUrl?>" method="post" name="loginforPublicStatistics" class="form">
+                    <h2><?php echo  PSTranslator::translate("Please type in the participation token:") ?> </h2>
+                    <form action="<?= $formUrl ?>" method="post" name="loginforPublicStatistics" class="form">
                         <div class="row">
                             <div class="form-group col-xs-12">
-                                <label for="email">Token</label>
+                                <label for="token"><?php echo  PSTranslator::translate("Token") ?></label>
                                 <input type="text" class="form-control" id="token" name="token" placeholder="Token">
                             </div>
                             <div class="form-group col-xs-12">
-                                <input type="submit" class="btn btn-primary" id="submit" name="submit" value="Submit">
+                                <input type="submit" class="btn btn-primary" id="submit" name="submit" value="<?php echo  PSTranslator::translate("Submit") ?>">
                             </div>
                         </div>
                     </form>
