@@ -5,7 +5,7 @@ class PSTranslator
 
     const DEFAULT_LNG = 'en';
 
-    public static $availableLanguages = ["en","de","fr"];
+    public static $availableLanguages = ["en", "de", "fr"];
 
     public static function translate($original, $lng = '')
     {
@@ -164,7 +164,7 @@ class PSTranslator
             "Available logins" => [
                 "en" => "Available logins",
                 "de" => "Verfügbare Anmeldungen",
-                "fr" => "Identifiantsdisponibles"
+                "fr" => "Identifiants disponibles"
             ],
 
 
@@ -275,6 +275,12 @@ class PSTranslator
                 "en" => "No contact set",
                 "de" => "Keine Information ",
                 "fr" => "Pas d'information"
+            ],
+
+            "Generate" => [
+                "en" => "Generate",
+                "de" => "Generieren",
+                "fr" => "Générer"
             ],
         ];
 
