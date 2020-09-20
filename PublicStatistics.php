@@ -14,8 +14,18 @@ spl_autoload_register(function ($class_name) {
 class PublicStatistics extends PluginBase
 {
     protected $storage = 'DbStorage';
-    static protected $description = 'Allow either sharing of statistics with a link, a one time token, or with email and password';
-    static protected $name = 'Public and shareable statistics';
+    static protected $description = 'Public and shareable statistics - Allow either sharing of statistics with a link, a one time token, or with email and password';
+    static protected $name = 'PublicStatistics';
+
+    protected $settings = array(
+
+        'basecolors' => array(
+            'type' => 'text',
+            'label' => 'Chart base colors <br>Example: [blue,red,#00000,rgb(25,89,96)...]',
+            'default' => '[]',
+        ),
+
+    );
 
     public function init()
     {
@@ -28,12 +38,20 @@ class PublicStatistics extends PluginBase
         $this->subscribe('newDirectRequest');
     }
 
+    /**
+     * Operations that run when the plugin is activated
+     * 
+     */
     public function beforeActivate()
     {
         PSInstaller::model()->installTables();
         PSInstaller::model()->installMenues();
     }
 
+    /**
+     * Operations that run when the plugin is deactivated
+     * 
+     */
     public function beforeDeactivate()
     {
         PSInstaller::model()->removeTables();
@@ -75,6 +93,14 @@ class PublicStatistics extends PluginBase
         return call_user_func([$this, $action], $oEvent, $request);
     }
 
+    /**
+     * Action to save statistics settings for a single survey
+     * 
+     * @param mixed $oEvent
+     * @param mixed $request
+     * 
+     * @return mixed
+     */
     public function saveinsurveysettings($oEvent, $request)
     {
         $sid = $request->getPost('sid');
@@ -93,8 +119,12 @@ class PublicStatistics extends PluginBase
         $oSurvey->begin = $begin == '' ? null : $begin;
         $oSurvey->data = json_encode($data);
 
+        if ($oSurvey->save()) {
+            Yii::app()->setFlashMessage(PSTranslator::translate("Setting saved."), 'success');
+        } else {
+            Yii::app()->setFlashMessage(PSTranslator::translate("Setting c'ant be saved."), 'success');
+        }
 
-        $oSurvey->save();
         Yii::app()->getController()->redirect(
             Yii::app()->createUrl(
                 'admin/pluginhelper/sa/sidebody',
@@ -103,6 +133,12 @@ class PublicStatistics extends PluginBase
         );
     }
 
+    /**
+     * Render the setting page for a single survey
+     * 
+     * @return mixed
+     * 
+     */
     public function insurveysettings()
     {
         $sid = Yii::app()->request->getParam('surveyid');
@@ -113,6 +149,14 @@ class PublicStatistics extends PluginBase
         return $this->renderPartial('insurveysettings', $aData, true);
     }
 
+    /**
+     * Action to store new logins data 
+     * 
+     * @param mixed $oEvent
+     * @param mixed $request
+     * 
+     * @return mixed 
+     */
     public function storeNewLogin($oEvent, $request)
     {
         $sid = $request->getPost('sid');
@@ -133,6 +177,14 @@ class PublicStatistics extends PluginBase
         return $this->renderPartial('toJson', ['data' => ['success' => false]]);
     }
 
+    /**
+     * Render all neccesary data for the vue js application / For logged users
+     * 
+     * @param mixed $oEvent
+     * @param mixed $request
+     * 
+     * @return mixed
+     */
     public function getDataDirect($oEvent, $request)
     {
         if (Yii::app()->user->isGuest || $oEvent->getEventName() !== 'newDirectRequest') {
@@ -146,6 +198,15 @@ class PublicStatistics extends PluginBase
         return $this->renderPartial('toJson', ['data' => $aResponseDataList]);
     }
 
+
+    /**
+     * Render statistic vue js application for logged users
+     * 
+     * @param mixed $oEvent
+     * @param mixed $request
+     * 
+     * @return mixed
+     */
     public function viewdirect($oEvent, $request)
     {
         if (Yii::app()->user->isGuest || $oEvent->getEventName() !== 'newDirectRequest') {
@@ -186,6 +247,16 @@ class PublicStatistics extends PluginBase
         return;
     }
 
+
+    /**
+     * Render all neccesary data for the vue js application / For guest users
+     * 
+     * @param mixed $oEvent
+     * @param mixed $request
+     * 
+     * @return mixed
+     */
+
     public function getDataUnsecure($oEvent, $request)
     {
 
@@ -220,6 +291,14 @@ class PublicStatistics extends PluginBase
         return $this->renderPartial('toJson', ['data' => $aResponseDataList]);
     }
 
+     /**
+     * Render statistic vue js application for guest users
+     * 
+     * @param mixed $oEvent
+     * @param mixed $request
+     * 
+     * @return mixed
+     */
     public function viewunsecure($oEvent, $request)
     {
 
@@ -281,7 +360,9 @@ class PublicStatistics extends PluginBase
 
 
         $oParser = new PSStatisticParser($sid);
+
         $aResponseDataList = $oParser->createParsedDataBlock();
+
         $output = $this->renderPartial(
             'viewstats',
             [
@@ -310,6 +391,14 @@ class PublicStatistics extends PluginBase
         return;
     }
 
+    /**
+     * Action to delete a login row
+     * 
+     * @param mixed $oEvent
+     * @param mixed $request
+     * 
+     * @return mixed 
+     */
     public function deleteLoginRow($oEvent, $oRequest)
     {
         $sid = $oRequest->getPost('sid');
@@ -320,6 +409,14 @@ class PublicStatistics extends PluginBase
         return $this->renderPartial('toJson', ['data' => ['success' => $oLoginModel->delete()]]);
     }
 
+     /**
+     * Action to reset a login password
+     * 
+     * @param mixed $oEvent
+     * @param mixed $request
+     * 
+     * @return mixed 
+     */
     public function resetLoginPassword($oEvent, $oRequest)
     {
         $sid = $oRequest->getPost('sid');
@@ -382,7 +479,7 @@ class PublicStatistics extends PluginBase
      * @param integer $pos See LSYii_ClientScript constants for options, default: LSYii_ClientScript::POS_BEGIN
      * @return void
      */
-    protected function registerScript($relativePathToScript, $parentPlugin=null, $pos = LSYii_ClientScript::POS_BEGIN)
+    protected function registerScript($relativePathToScript, $parentPlugin = null, $pos = LSYii_ClientScript::POS_BEGIN)
     {
         $parentPlugin = get_class($this);
         $pathPossibilities = [
@@ -431,5 +528,4 @@ class PublicStatistics extends PluginBase
 
         Yii::app()->getClientScript()->registerCssFile($cssToRegister);
     }
-
 }
