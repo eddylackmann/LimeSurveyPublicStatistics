@@ -58,11 +58,14 @@ class PSTranslator
                 "de" => "Einstellung speichern"
             ],
 
-            "Setting saved" => [
-                "en" => "Setting saved",
+            "Setting saved." => [
+                "en" => "Setting saved.",
                 "de" => "Einstellung gespeichert"
             ],
-
+            "Setting can't be saved." => [
+                "en" => "Setting can't be saved.",
+                "de" => "Einstellung konnte nicht gespeichert werden"
+            ],
             "Basic link (for logged in users)" => [
                 "en" => "Basic link (for logged in users)",
                 "de" => "Basic link (für angemeldete Benutzer)"
@@ -171,7 +174,7 @@ class PSTranslator
                 "en" => "Close",
                 "de" => "Schließen"
             ],
-            
+
             "Valid from (leave empty for unlimited)" => [
                 "en" => "Valid from (leave empty for unlimited)",
                 "de" => "Gültig ab (Leer lassen für keine Einschränkung)"
