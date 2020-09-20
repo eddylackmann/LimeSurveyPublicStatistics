@@ -34,9 +34,9 @@
   },
   "eslintConfig": {
     "root": true,
-    "globals": { 
+    "globals": {
       "_": true
-     },
+    },
     "env": {
       "node": true,
       "jquery": true

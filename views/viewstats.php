@@ -15,6 +15,8 @@
             get-data-url='<?=$getDataUrl?>' 
             :word-cloud-settings='<?=json_encode($wordCloudSettings)?>'
             :surveydata='<?=json_encode($surveyData)?>'
+            :theme='<?=json_encode($theme)?>'
+            :basecolors='<?=json_encode($basecolors)?>'
         />
     </div>
 </body>

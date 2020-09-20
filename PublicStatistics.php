@@ -1,4 +1,5 @@
 <?php
+
 spl_autoload_register(function ($class_name) {
     if (preg_match("/^PS.*/", $class_name)) {
         if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $class_name . '.php')) {
@@ -21,8 +22,9 @@ class PublicStatistics extends PluginBase
 
         'basecolors' => array(
             'type' => 'text',
-            'label' => 'Chart base colors <br>Example: [blue,red,#00000,rgb(25,89,96)...]',
-            'default' => '[]',
+            'label' => 'Diagrams colors list',
+            'help' => 'Example: ["blue","#00000","rgb(25,89,96)"] - Make sure to insert an array of colors or leave empty for default colors',
+            'default' => '',
         ),
 
     );
@@ -142,10 +144,11 @@ class PublicStatistics extends PluginBase
     public function insurveysettings()
     {
         $sid = Yii::app()->request->getParam('surveyid');
+
         $aData = PSSurveyController::model()->prepareSettingsForRendering($sid);
 
         $this->registerScript('assets/publicstatisticsettings.js', LSYii_ClientScript::POS_END);
-
+       
         return $this->renderPartial('insurveysettings', $aData, true);
     }
 
@@ -190,8 +193,8 @@ class PublicStatistics extends PluginBase
         if (Yii::app()->user->isGuest || $oEvent->getEventName() !== 'newDirectRequest') {
             return $this->renderPartial('toJson', ['data' => []]);
         }
-        $sid = $request->getParam('surveyid');
 
+        $sid = $request->getParam('surveyid');
         $oParser = new PSStatisticParser($sid);
         $aResponseDataList = $oParser->createParsedDataBlock();
 
@@ -215,6 +218,8 @@ class PublicStatistics extends PluginBase
 
         $sid = $request->getParam('surveyid');
 
+        $baseColors = json_decode($this->get('basecolors'));
+
         $oSurvey = PSSurveys::model()->findByPk($sid);
         if ($oSurvey == null || $oSurvey->survey->active !== 'Y') {
             return $this->errorSurveyNotActive();
@@ -230,7 +235,9 @@ class PublicStatistics extends PluginBase
                         'surveyid' => $sid
                     ]
                 ),
+
                 'theme' => $oSurvey->survey->template,
+                'basecolors' => $baseColors,
                 'wordCloudSettings' => PSWordCloudSettings::getSettings(),
                 'surveyData' => PSSurveyController::generateData($oSurvey->data)
             ],
@@ -272,6 +279,8 @@ class PublicStatistics extends PluginBase
         $token = $request->getParam('token');
         $oSurvey = PSSurveys::model()->findByPk($sid);
 
+        $baseColors = json_decode($this->get('basecolors'));
+
         if (($timecheck == null ||  $sidcheck == null)
             && ($timecheck != $timeCheckParam || $sid != $sidcheck)
         ) {
@@ -288,10 +297,10 @@ class PublicStatistics extends PluginBase
         $oParser = new PSStatisticParser($sid);
         $aResponseDataList = $oParser->createParsedDataBlock();
 
-        return $this->renderPartial('toJson', ['data' => $aResponseDataList]);
+        return $this->renderPartial('toJson', ['data' => $aResponseDataList, 'basecolors' => $baseColors]);
     }
 
-     /**
+    /**
      * Render statistic vue js application for guest users
      * 
      * @param mixed $oEvent
@@ -357,10 +366,7 @@ class PublicStatistics extends PluginBase
             return;
         }
 
-
-
         $oParser = new PSStatisticParser($sid);
-
         $aResponseDataList = $oParser->createParsedDataBlock();
 
         $output = $this->renderPartial(
@@ -403,13 +409,12 @@ class PublicStatistics extends PluginBase
     {
         $sid = $oRequest->getPost('sid');
         $loginId = $oRequest->getPost('loginId');
-
         $oLoginModel = PSLogins::model()->findByPk($loginId);
 
         return $this->renderPartial('toJson', ['data' => ['success' => $oLoginModel->delete()]]);
     }
 
-     /**
+    /**
      * Action to reset a login password
      * 
      * @param mixed $oEvent
@@ -421,12 +426,15 @@ class PublicStatistics extends PluginBase
     {
         $sid = $oRequest->getPost('sid');
         $loginId = $oRequest->getPost('loginId');
-
         $oLoginModel = PSLogins::model()->findByPk($loginId);
         $clearpass = $oLoginModel->generatePassword();
-        $this->_sendEmail($oLoginModel, $clearpass);
 
-        return $this->renderPartial('toJson', ['data' => ['success' => true, 'clearPass' => $clearpass]]);
+        if ($oLoginModel->save()) {
+            $this->_sendEmail($oLoginModel, $clearpass);
+            return $this->renderPartial('toJson', ['data' => ['success' => true, 'clearPass' => $clearpass]]);
+        }
+
+        return $this->renderPartial('toJson', ['data' => ['success' => false]]);
     }
 
     private function errorSurveyNotActive()

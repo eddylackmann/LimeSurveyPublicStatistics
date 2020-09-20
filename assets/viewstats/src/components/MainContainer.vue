@@ -1,7 +1,7 @@
 <template>
     <div class="container" :class="printable ? 'make-printable' : ''">
         <div class="row scoped-questiongrouprow" v-for="(questions,gid) in questiongroups" :key="gid" >
-            <questionpanel v-for="question in questions" :key="question.fieldname" :question="question" :initial-chart-type="initialChartType" :word-cloud-settings="wordCloudSettings"/>
+            <questionpanel v-for="question in questions" :key="question.fieldname" :question="question" :initial-chart-type="initialChartType" :basecolors="basecolors" :word-cloud-settings="wordCloudSettings"/>
         </div>
     </div>
 </template>
@@ -19,11 +19,15 @@ export default {
     questiongroups: {type: Object, required: true},
     wordCloudSettings: {type: Object, required: true},
     printable: {type: Boolean, default: false},
-    initialChartType: {type: String, default: 'bar'}
+    initialChartType: {type: String, default: 'bar'},
+    basecolors: {type: Array}
   },
   data(){
       return {}
   },
+    created() {
+        
+    },
 }
 </script>
 
