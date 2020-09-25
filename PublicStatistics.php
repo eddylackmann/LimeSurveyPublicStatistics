@@ -36,6 +36,7 @@ class PublicStatistics extends PluginBase
          */
         $this->subscribe('beforeActivate');
         $this->subscribe('beforeDeactivate');
+        $this->subscribe('beforeAdminMenuRender');
         $this->subscribe('newUnsecureRequest');
         $this->subscribe('newDirectRequest');
     }
@@ -59,6 +60,19 @@ class PublicStatistics extends PluginBase
         PSInstaller::model()->removeTables();
         PSInstaller::model()->removeMenues();
     }
+
+
+    /**
+     * Actions to run when admin menu renders
+     * @return void
+     */
+    public function beforeAdminMenuRender()
+    {
+        PSInstaller::model()->proccessUpdate();
+    }
+
+
+
     /**
      * Relay a direct request to the called method
      *
@@ -106,7 +120,6 @@ class PublicStatistics extends PluginBase
     public function saveinsurveysettings($oEvent, $request)
     {
         $sid = $request->getPost('sid');
-
         $oSurvey = $this->getPSSurveyModel($sid);
 
         $activated = $request->getPost('activated', 1);
@@ -144,7 +157,7 @@ class PublicStatistics extends PluginBase
     public function insurveysettings()
     {
         $sid = Yii::app()->request->getParam('surveyid');
-
+    
         $aData = PSSurveyController::model()->prepareSettingsForRendering($sid);
 
         $this->registerScript('assets/publicstatisticsettings.js', LSYii_ClientScript::POS_END);

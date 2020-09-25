@@ -119,20 +119,20 @@ class PSTranslator
 
             "Set Token? (Leave empty for none)" => [
                 "en" => "Set Token? (Leave empty for none)",
-                "de" => "Token setzen? (leer lassen für Zugang ohne Token)",
+                "de" => "Token setzen? (Leer lassen für unbeschränkt)",
                 "fr" => "Définir le mot secret? (Laisser vide pour aucun)"
             ],
 
 
             "Set expiry date? (Leave empty for none)" => [
                 "en" => "Set expiry date? (Leave empty for none)",
-                "de" => "Ablaufdatum festlegen? (Für nichts leer lassen)",
+                "de" => "Ablaufdatum festlegen? (Leer lassen für unbeschränkt)",
                 "fr" => "Définir la date d'expiration? (Laisser vide pour aucun)"
             ],
 
             "Set begin date? (Leave empty for none)" => [
                 "en" => "Set begin date? (Leave empty for none)",
-                "de" => "Startdatum festlegen? (Für nichts leer lassen)",
+                "de" => "Startdatum festlegen? (Leer lassen für unbeschränkt)",
                 "fr" => "Définir la date de début? (Laisser vide pour aucun)"
             ],
 
@@ -213,13 +213,13 @@ class PSTranslator
 
             "Valid from (leave empty for unlimited)" => [
                 "en" => "Valid from (leave empty for unlimited)",
-                "de" => "Gültig ab (Leer lassen für keine Einschränkung)",
+                "de" => "Gültig ab (Leer lassen für unbeschränkt)",
                 "fr" => "Valable à partir du (laisser vide pour un durée illimitée)"
             ],
 
             "Valid until (leave empty for unlimited)" => [
                 "en" => "Valid until (leave empty for unlimited)",
-                "de" => "Gültig bis (Leer lassen für keine Einschränkung)",
+                "de" => "Gültig bis (Leer lassen für unbeschränkt)",
                 "fr" => "Valable jusqu'au (laisser vide pour un durée illimitée)"
             ],
 

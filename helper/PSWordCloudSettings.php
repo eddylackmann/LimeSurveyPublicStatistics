@@ -15,7 +15,7 @@ class PSWordCloudSettings {
         $oModel = self::getModel();
         
         $iPluginWordCloudId = $oModel->getWordCloudPluginId();
-        $aPluginWordCloudSettings = $oModel->getWordCloudPluginSettings($iPluginWordCloudId );
+        $aPluginWordCloudSettings = $oModel->getWordCloudPluginSettings($iPluginWordCloudId);
  
         return $aPluginWordCloudSettings;
 

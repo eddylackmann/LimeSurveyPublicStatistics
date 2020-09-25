@@ -19,6 +19,7 @@ class PSInstaller
         $oDB = Yii::app()->db;
         $oTransaction = $oDB->beginTransaction();
         try {
+
             $oDB->createCommand()->createTable('{{PSSurveys}}', array(
                 'sid' => 'int NOT NULL',
                 'activated' => 'int DEFAULT 1',
@@ -44,8 +45,10 @@ class PSInstaller
                 'loginid' => 'int NULL DEFAULT NULL',
                 'token' => 'string NOT NULL'
             ));
+
             $oTransaction->commit();
             return true;
+
         } catch (Exception $e) {
             $oTransaction->rollback();
             throw new CHttpException(500, $e->getMessage());
@@ -77,20 +80,31 @@ class PSInstaller
         return SurveymenuEntries::staticAddMenuEntry($oMenu->id, $aMenuSettings1);
     }
 
+    /**
+     * Removes all tables of the plugin.. 
+     *
+     * @return void
+     */
     public function removeTables()
     {
         $oDB = Yii::app()->db;
-        $oTransaction = $oDB->beginTransaction();
-        try {
+
+        if(tableExists('PSSurveys')){
             $oDB->createCommand()->dropTable('{{PSSurveys}}');
-            $oDB->createCommand()->dropTable('{{PSLogins}}');
-            $oDB->createCommand()->dropTable('{{PSAccess}}');
-            $oTransaction->commit();
-            return true;
-        } catch (Exception $e) {
-            $oTransaction->rollback();
-            throw new CHttpException(500, $e->getMessage());
         }
+        
+        if(tableExists('PSLogins')){
+            $oDB->createCommand()->dropTable('{{PSLogins}}');
+        }
+        if(tableExists('PSAccess')){
+            $oDB->createCommand()->dropTable('{{PSAccess}}');
+        }
+
+        if(tableExists('PSAddons')){
+            $oDB->createCommand()->dropTable('{{PSAddons}}');
+        }
+
+        return true;
     }
 
     public function removeMenues()
@@ -98,4 +112,64 @@ class PSInstaller
         $oSuerveymenuEntry = SurveymenuEntries::model()->findByAttributes(['name' => 'publicstatssettings']);
         return $oSuerveymenuEntry->delete();
     }
+
+    /**
+     * Run Plugin unpdates
+     *
+     * @return boolean
+     */
+    public function proccessUpdate()
+    {
+        $result = false;
+        
+        $result = $this->createTable('PSAddons', array(
+            'id' => 'pk',
+            'name' => 'string NULL DEFAULT NULL',
+            'version' => 'string NULL DEFAULT NULL',
+            'hook' => 'string NULL DEFAULT NULL',
+            'hook_data' => 'string NULL DEFAULT NULL',
+            'settings' => 'string NULL DEFAULT NULL',
+        ));
+      
+         
+        if ($result) {
+
+            Yii::app()->setFlashMessage("Public Statistics modules updated", 'success');
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * Create database table 
+     *
+     * @param string $tableName
+     * @param array $arguments
+     * @return bool
+     */
+    private function createTable(string $tableName,array $arguments){
+        
+        $result = false;
+
+        if(!tableExists($tableName)){
+            
+            $oDB = Yii::app()->db;
+            $oTransaction = $oDB->beginTransaction();
+            try {
+
+                $oDB->createCommand()->createTable('{{'.$tableName.'}}', $arguments);
+                $oTransaction->commit();
+                
+                $result =  true;
+
+            } catch (Exception $e) {
+                $oTransaction->rollback();
+                throw new CHttpException(500, $e->getMessage());
+            }
+        }
+
+        return $result;
+    }
+
 }
