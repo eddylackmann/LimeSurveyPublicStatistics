@@ -14,45 +14,39 @@ class PSInstaller
         return self::$model;
     }
 
+
+
     public function installTables()
     {
-        $oDB = Yii::app()->db;
-        $oTransaction = $oDB->beginTransaction();
-        try {
+        
+        $this->createTable('PSLogins', array(
+            'id' => 'pk',
+            'sid' => 'int NOT NULL',
+            'activated' => 'int DEFAULT 1',
+            'email' => 'string NOT NULL',
+            'passHash' => 'TEXT NULL DEFAULT NULL',
+            'begin' => 'datetime NULL DEFAULT NULL',
+            'expire' => 'datetime NULL DEFAULT NULL'
+        ));
 
-            $oDB->createCommand()->createTable('{{PSSurveys}}', array(
-                'sid' => 'int NOT NULL',
-                'activated' => 'int DEFAULT 1',
-                'token' => 'string NULL DEFAULT NULL',
-                'begin' => 'datetime NULL DEFAULT NULL',
-                'expire' => 'datetime NULL DEFAULT NULL',
-                'data' => 'text NULL DEFAULT NULL'
-            ));
-            $oDB->createCommand()->createTable('{{PSLogins}}', array(
-                'id' => 'pk',
-                'sid' => 'int NOT NULL',
-                'activated' => 'int DEFAULT 1',
-                'email' => 'string NOT NULL',
-                'passHash' => 'TEXT NULL DEFAULT NULL',
-                'begin' => 'datetime NULL DEFAULT NULL',
-                'expire' => 'datetime NULL DEFAULT NULL'
-            ));
-            $oDB->createCommand()->createTable('{{PSAccess}}', array(
-                'id' => 'pk',
-                'sid' => 'int NOT NULL',
-                'time' => 'datetime NULL DEFAULT NULL',
-                'type' => 'string(128) NOT NULL',
-                'loginid' => 'int NULL DEFAULT NULL',
-                'token' => 'string NOT NULL'
-            ));
-
-            $oTransaction->commit();
-            return true;
-
-        } catch (Exception $e) {
-            $oTransaction->rollback();
-            throw new CHttpException(500, $e->getMessage());
-        }
+        $this->createTable('PSAccess', array(
+            'id' => 'pk',
+            'sid' => 'int NOT NULL',
+            'time' => 'datetime NULL DEFAULT NULL',
+            'type' => 'string(128) NOT NULL',
+            'loginid' => 'int NULL DEFAULT NULL',
+            'token' => 'string NOT NULL'
+        ));
+            
+        $this->createTable('PSSurveys', array(
+            'sid' => 'int NOT NULL',
+            'activated' => 'int DEFAULT 1',
+            'token' => 'string NULL DEFAULT NULL',
+            'begin' => 'datetime NULL DEFAULT NULL',
+            'expire' => 'datetime NULL DEFAULT NULL',
+            'data' => 'text NULL DEFAULT NULL'
+        ));
+       
     }
 
     public function installMenues()
@@ -109,8 +103,16 @@ class PSInstaller
 
     public function removeMenues()
     {
+        $result = false;
+
         $oSuerveymenuEntry = SurveymenuEntries::model()->findByAttributes(['name' => 'publicstatssettings']);
-        return $oSuerveymenuEntry->delete();
+
+        if($oSuerveymenuEntry){
+            $result = $oSuerveymenuEntry->delete();
+        }
+        
+        return $result;
+        
     }
 
     /**

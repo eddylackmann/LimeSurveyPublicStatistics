@@ -16,7 +16,7 @@ class PSTranslator
 
         $translated = $original;
 
-        if ($translations[$original]) {
+        if (isset($translations[$original])) {
 
             if (isset($translations[$original][$lng])) {
                 $translated = $translations[$original][$lng];
