@@ -15,9 +15,7 @@
                 </button>
             </div>
         </div>
-        <div>
-            <h1><?php echo  PSTranslator::translate("Public Statistics - Settings") ?></h1>
-        </div>
+       
         <?php if ($isActive) { ?>
             <div class="row">
                 <div class="col-md-12">
