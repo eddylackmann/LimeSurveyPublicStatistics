@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * PSSurveyController class
+ * 
+ * 
+ * 
+ * @author Markus Flür | LimeSurvey Team <support@limeSurvey.org>
+ * @license GPL 2.0 or later
+ * @category Plugin 
+ * 
+ */
 class PSSurveyController {
 
     private static $model=null;
@@ -13,10 +23,7 @@ class PSSurveyController {
         return self::$model;
     }
 
-    public function prepareViewForRendering($sid) {
-
-    }
-
+    
     public function prepareSettingsForRendering($sid) {
         $oSurvey = PSSurveys::model()->findByPk($sid);
         if($oSurvey == null) {
@@ -52,7 +59,7 @@ class PSSurveyController {
             ],
             $aDataArray
         );
-        
+         
         return $aDataArray;
     }
     

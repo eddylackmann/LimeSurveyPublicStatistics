@@ -1,15 +1,15 @@
 <?php
 /**
- * ORM for the plugin data
- * fields
- *  'id' => 'pk',
- *  'sid' => 'int NOT NULL',
- *  'time' => 'datetime NULL DEFAULT NULL',
- *  'type' => 'string(128) NOT NULL',
- *  'loginid' => 'int NULL DEFAULT NULL',
- *  'token' => 'string NOT NULL'
+ * PSAccess class
+ * Abstract class for Access model.
+ * this class handle the accesses to the public statitistics frontend
+ * 
+ * 
+ * @author Markus Flür | LimeSurvey Team <support@limeSurvey.org>
+ * @license GPL 2.0 or later
+ * @category Plugin 
+ * 
  */
-
 class PSAccess extends LSActiveRecord
 {
     
@@ -53,6 +53,7 @@ class PSAccess extends LSActiveRecord
     }
 
     public function getFormattedAccessTime() {
+        $dateformatdetails = getDateFormatForSID($this->sid);
         Yii::import('application.libraries.Date_Time_Converter');
         $datetimeobj = new Date_Time_Converter($this->time, 'Y-m-d H:i:s');
         return $datetimeobj->convert($dateformatdetails['phpdate'].' H:i');

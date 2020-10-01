@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * Class PSTranslator
+ * a simple translation module for the plugin
+ * 
+ * @author Eddy Lackmann <eddy.lackmann@limeSurvey.org>
+ * @license GPL 2.0 or later
+ *
+ * 
+ */
 class PSTranslator
 {
 

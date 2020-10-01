@@ -1,5 +1,15 @@
 <?php
 /**
+ * PSLogins class
+ * Abstract class for Logins model
+ * this class handles the logins data to access the public statitistics frontend
+ * 
+ * 
+ * @author Markus Flür | LimeSurvey Team <support@limeSurvey.org>
+ * @license GPL 2.0 or later
+ * @category Plugin 
+ * 
+ *
  * ORM for the plugin data
  * fields
  *  'id' => 'pk',
@@ -53,6 +63,11 @@ class PSLogins extends LSActiveRecord
         );
     }
 
+    /**
+     * Format expired date 
+     *
+     * @return string
+     */
     public function getFormattedExpire() {
         $dateformatdetails = getDateFormatForSID($this->sid);
         Yii::import('application.libraries.Date_Time_Converter');
@@ -60,6 +75,12 @@ class PSLogins extends LSActiveRecord
         return $datetimeobj->convert($dateformatdetails['phpdate'].' H:i');
     }
 
+    
+    /**
+     * Format Begin date 
+     *
+     * @return string
+     */
     public function getFormattedBegin() {
         $dateformatdetails = getDateFormatForSID($this->sid);
         Yii::import('application.libraries.Date_Time_Converter');
@@ -67,10 +88,24 @@ class PSLogins extends LSActiveRecord
         return $datetimeobj->convert($dateformatdetails['phpdate'].' H:i');
     }
 
+    
+    /**
+     * This function helps to encrypt / hash some string   
+     *@param string $password 
+     * @return string
+     */
     public function cryptpass($password) {
         return CPasswordHelper::hashPassword($password);
     }
 
+    /**
+     * Checks logins credentials
+     *
+     * @param int $sid - Survey id
+     * @param string $email
+     * @param string $password
+     * @return bool
+     */
     public static function verifyLogin($sid, $email, $password) {
         $oModel = self::model()->findByAttributes([ "sid" => $sid, "email" => $email]);
         if ($oModel !== null) {
@@ -79,6 +114,11 @@ class PSLogins extends LSActiveRecord
         return false;
     }
 
+    /**
+     * Generates random password
+     *
+     * @return string
+     */
     public function generatePassword() 
     {
         $prefixArray = [

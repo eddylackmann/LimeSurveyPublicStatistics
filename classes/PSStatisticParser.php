@@ -1,4 +1,15 @@
 <?php
+
+/**
+ * PSStatisticParser class
+ * 
+ * Parse all responses and questions and prepare data for the statistics 
+ * 
+ * @author Markus Flür | LimeSurvey Team <support@limeSurvey.org>
+ * @license GPL 2.0 or later
+ * @category Plugin 
+ * 
+ */
 class PSStatisticParser {
 
     public $sid;

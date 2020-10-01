@@ -1,5 +1,14 @@
 <?php
 /**
+ * PSSurveys class
+ * Abstract class for PSSurveys model
+ * this class handles the settings of the statistics for each survey
+ * 
+ * 
+ * @author Markus Flür | LimeSurvey Team <support@limeSurvey.org>
+ * @license GPL 2.0 or later
+ * @category Plugin 
+ * 
  * ORM for the plugin data
  * fields
  *   'sid' => 'int NOT NULL',
@@ -51,6 +60,11 @@ class PSSurveys extends LSActiveRecord
         );
     }
 
+    /**
+     * Format expire date 
+     *
+     * @return string
+     */
     public function getFormattedExpiry() {
         $dateformatdetails = getDateFormatForSID($this->sid);
         Yii::import('application.libraries.Date_Time_Converter');
@@ -58,6 +72,11 @@ class PSSurveys extends LSActiveRecord
         return $datetimeobj->convert($dateformatdetails['phpdate'].' H:i');
     }
 
+    /**
+     * Format begin date 
+     *
+     * @return string
+     */
     public function getFormattedBegin() {        
         $dateformatdetails = getDateFormatForSID($this->sid);
         Yii::import('application.libraries.Date_Time_Converter');
@@ -65,6 +84,11 @@ class PSSurveys extends LSActiveRecord
         return $datetimeobj->convert($dateformatdetails['phpdate'].' H:i');
     }
 
+    /**
+     * Checks if survey statistics has login 
+     *
+     * @return string
+     */
     public function getHasLogins() {
         return safecount($this->logins)>0;
     }
