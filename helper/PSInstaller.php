@@ -46,6 +46,14 @@ class PSInstaller
             'expire' => 'datetime NULL DEFAULT NULL',
             'data' => 'text NULL DEFAULT NULL'
         ));
+
+        $this->createTable('PSHooks', array(
+            'id' => 'pk',
+            'sid' => 'int NOT NULL',
+            'active' => 'int DEFAULT 1',
+            'hook' => 'string NULL DEFAULT NULL',
+            'hook_data' => 'text',
+        ));
        
     }
 
@@ -94,9 +102,6 @@ class PSInstaller
             $oDB->createCommand()->dropTable('{{PSAccess}}');
         }
 
-        if(tableExists('PSAddons')){
-            $oDB->createCommand()->dropTable('{{PSAddons}}');
-        }
 
         return true;
     }
@@ -123,16 +128,18 @@ class PSInstaller
     public function proccessUpdate()
     {
         $result = false;
-        
-        $result = $this->createTable('PSAddons', array(
+        $oDB = Yii::app()->db;
+        $result = $this->createTable('PSHooks', array(
             'id' => 'pk',
-            'name' => 'string NULL DEFAULT NULL',
-            'version' => 'string NULL DEFAULT NULL',
+            'sid' => 'int NOT NULL',
+            'active' => 'int DEFAULT 1',
             'hook' => 'string NULL DEFAULT NULL',
-            'hook_data' => 'string NULL DEFAULT NULL',
-            'settings' => 'string NULL DEFAULT NULL',
+            'hook_data' => 'text',
         ));
-      
+       
+        if(tableExists('PSAddons')){
+            $oDB->createCommand()->dropTable('{{PSAddons}}');
+        }
          
         if ($result) {
 
