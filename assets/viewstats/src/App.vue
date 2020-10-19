@@ -6,7 +6,7 @@
           <div
             id="loader"
             class="loader--loaderWidget ls-flex ls-flex-column align-content-center align-items-center"
-            style="min-height: 100%;"
+            style="min-height: 100%"
           >
             <div class="ls-flex align-content-center align-items-center">
               <div class="loader-public-statistic text-center">
@@ -46,7 +46,7 @@
           <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav stats-nav">
               <li class="active">
-                <a href="#headline">Home</a>
+                <a href="#headline">{{ $t("Home") }}</a>
               </li>
               <li class="dropdown">
                 <a
@@ -57,7 +57,8 @@
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  Question list
+                  {{ $t("QuestionList") }}
+
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu scrollable-menu">
@@ -72,7 +73,9 @@
                 </ul>
               </li>
               <li>
-                <a href="#contact" @click="showContactData">Contact</a>
+                <a href="#contact" @click="showContactData">{{
+                  $t("Contact")
+                }}</a>
               </li>
             </ul>
           </div>
@@ -85,20 +88,50 @@
         <div class="row">
           <div class="col-xs-12">
             <div class="page-header" id="headline">
-              <h1>Public statistics for {{ data.surveyname }}</h1>
+              <h2>{{ $t("pageTitle", { title: data.surveyname }) }}</h2>
             </div>
-            <hr />
+            <div v-if="groupedSurvey" >
+              <h3>
+                {{ $t("GroupedStatistics") }}
+                <span class="stats-warning text-danger">&#x26a0;</span>
+              </h3>
+              <p class="text-danger">
+                <b>{{ $t("GroupedStatisticsNotes") }} </b>
+              </p>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>
+                      {{ $t("id") }}
+                    </th>
+                    <th>
+                      {{ $t("Survey") }}
+                    </th>
+                    <th>
+                      {{ $t("CommonQuestions") }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(addi, id) in additional" :key="id">
+                    <td>{{ addi.id }}</td>
+                    <td>{{ addi.title }}</td>
+                    <td>{{ addi.common }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <hr />
+            </div>
             <p>
-              This survey contains
-              <b>{{ data.questions }}</b>
-              questions in
-              <b>{{ data.questiongroups }}</b>
-              question groups.
+              {{
+                $t("SummaryQuestions", {
+                  questionCount: data.questions,
+                  questionGroupCount: data.questiongroups,
+                })
+              }}
             </p>
             <p>
-              A total of
-              <b>{{ data.responses }}</b>
-              responses have been collected.
+              {{ $t("summaryResponses", { responsesCount: data.responses }) }}
             </p>
           </div>
         </div>
@@ -133,7 +166,7 @@
             >
               <span aria-hidden="true">&times;</span>
             </button>
-            <h4 class="modal-title">Your contact:</h4>
+            <h4 class="modal-title">{{ $t("Contact") }}</h4>
           </div>
           <div class="modal-body">
             <pre>{{ surveydata.contactinformation | trim }}</pre>
@@ -145,21 +178,22 @@
 </template>
 
 <script>
-import MainContainer from './components/MainContainer.vue'
+import MainContainer from "./components/MainContainer.vue";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     MainContainer,
   },
   props: {
-    getDataUrl: { type: String, default: '' },
+    getDataUrl: { type: String, default: "" },
     wordCloudSettings: { type: Object, required: true },
     surveydata: { type: Object, required: true },
-    theme: { type: String, default: '' },
+    theme: { type: String, default: "" },
     basecolors: {
       type: Array,
     },
+    language: { type: String, default: "" },
   },
   data() {
     return {
@@ -168,7 +202,10 @@ export default {
       loading: true,
       printable: false,
       colors: this.basecolors,
-    }
+      lang: this.language,
+      groupedSurvey: this.groupedSurvey,
+      additional: this.additional,
+    };
   },
   computed: {
     questionAnchors() {
@@ -176,30 +213,34 @@ export default {
         this.questiongroups,
         (coll, questions, gid) => {
           _.forEach(questions, (question) => {
-            coll[question.fieldname] = question.question
-          })
-          return coll
+            coll[question.fieldname] = question.aid;
+          });
+          return coll;
         },
-        {},
-      )
+        {}
+      );
     },
   },
   methods: {
+    test() {
+      console.log(this.language);
+    },
+
     showContactData() {
-      $('#PublicStatistic--contact-modal').modal('show')
+      $("#PublicStatistic--contact-modal").modal("show");
     },
     togglePrintable() {
-      this.printable = !this.printable
+      this.printable = !this.printable;
     },
     exportToPDF() {
-      this.loading = true
+      this.loading = true;
       this.createPDFworker()
         .then((res) => {
-          this.loading = false
+          this.loading = false;
         })
         .finally(() => {
-          this.loading = false
-        })
+          this.loading = false;
+        });
     },
     /*createPDFworker () {
             const aElementArray = $('.selector--question-panel');
@@ -234,32 +275,35 @@ export default {
   },
   filters: {
     trim(string) {
-      return string.trim()
+      return string.trim();
     },
     forIndex(string) {
-      const tmp = document.createElement('DIV')
-      tmp.innerHTML = string
-      let txtContent = tmp.textContent || tmp.innerText || ''
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = string;
+      let txtContent = tmp.textContent || tmp.innerText || "";
       return txtContent.length > 35
-        ? txtContent.substr(0, 13) + '[...]'
-        : txtContent
+        ? txtContent.substr(0, 13) + "[...]"
+        : txtContent;
     },
   },
   created() {
     $.ajax({
       url: this.getDataUrl,
-      method: 'GET',
+      method: "GET",
       xhrFields: {
         withCredentials: true,
       },
       success: (data) => {
-        this.loading = false
-        this.questiongroups = data.questiongroups
-        this.data = data.data
+        this.loading = false;
+        this.questiongroups = data.questiongroups;
+        this.data = data.data;
+        this.groupedSurvey = data.GroupedStats;
+        this.additional = data.additional;
+        this.$i18n.locale = this.language;
       },
-    })
+    });
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

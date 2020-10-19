@@ -154,6 +154,9 @@ export default {
               marker: {
                 color: this.basecolors,
               },
+              xaxis: {
+                 tickformat: '1',
+              }
             },
           ];
         case "pie":
