@@ -1,4 +1,13 @@
 <?php 
+/**
+ * PSWordCloudSettings
+ * Handle Wordcloud settings for the public statistics
+ * 
+ * @author Markus Flür | LimeSurvey Team <support@limeSurvey.org>
+ * @license GPL 2.0 or later
+ *
+ * 
+ */
 class PSWordCloudSettings {
 
     private static $model = null;

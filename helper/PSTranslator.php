@@ -290,6 +290,24 @@ class PSTranslator
                 "de" => "Generieren",
                 "fr" => "Générer"
             ],
+
+            "Initialize" => [
+                "en" => "Initialize",
+                "de" => "Initialisieren",
+                "fr" => "Initialiser"
+            ],
+
+            "Public Statistics not initialised" => [
+                "en" => "Public Statistics not initialised",
+                "de" => "Öffentliche Statistik nicht initialisiert",
+                "fr" => "Statistiques publiques non initialisées"
+            ],
+
+            "Additional links (Grouped Stats module)" => [
+                "en" => "Additional links (Grouped Stats module)",
+                "de" => "Zusätzliche Links (Modul 'Gruppierte Statistik')",
+                "fr" => "Liens supplémentaires (module Statistiques groupées)"
+            ],
         ];
 
         return $translations;
