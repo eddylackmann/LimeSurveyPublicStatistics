@@ -17,6 +17,7 @@
             :surveydata='<?=json_encode($surveyData)?>'
             :theme='<?=json_encode($theme)?>'
             :basecolors='<?=json_encode($basecolors)?>'
+            :language='<?=json_encode($language)?>'
         />
     </div>
 </body>

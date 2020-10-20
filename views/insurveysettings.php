@@ -40,7 +40,7 @@
                                             <div class="col-sm-4 col-xs-12 background-muted">
                                                 <?php echo  PSTranslator::translate("Basic link (for logged in users)") ?>
                                             </div>
-                                            <div class="col-sm-6 col-xs-12" style="display:block;">
+                                            <div class="col-sm-6 col-xs-12"style="display:inline-block;  word-wrap: break-word; ">
                                                 <?= Yii::app()->createAbsoluteUrl(
                                                     'plugins/direct',
                                                     [
@@ -50,7 +50,7 @@
                                                     ]
                                                 ) ?>
                                             </div>
-                                            <div class="col-sm-2 col-xs-12" style="display:block;">
+                                            <div class="col-sm-2 col-xs-12" style="display:inline-block;  word-wrap: break-word; ">
                                                 <a href="<?= Yii::app()->createAbsoluteUrl(
                                                                 'plugins/direct',
                                                                 [
@@ -67,7 +67,7 @@
                                             <div class="col-sm-4 col-xs-12 background-muted">
                                                 <?php echo  PSTranslator::translate("Basic link (for non-logged in users)") ?>
                                             </div>
-                                            <div class="col-sm-6 col-xs-12" style="display:block;">
+                                            <div class="col-sm-6 col-xs-12" style="display:inline-block;  word-wrap: break-word; ">
                                                 <?= Yii::app()->createAbsoluteUrl(
                                                     'plugins/unsecure',
                                                     [
@@ -78,7 +78,7 @@
                                                     ]
                                                 ) ?>
                                             </div>
-                                            <div class="col-sm-2 col-xs-12" style="display:block;">
+                                            <div class="col-sm-2 col-xs-12" style="display:inline-block;  word-wrap: break-word; ">
                                                 <a href="<?= Yii::app()->createAbsoluteUrl(
                                                                 'plugins/direct',
                                                                 [
@@ -99,7 +99,101 @@
                        
                     </div>
                     <!-----Links settings stop------>
-                    
+
+                    <!-----Additional Link settings when hook active start------>
+                    <?php if($relatedSurveyhookActive && $PS["activated"]):?>
+
+
+                        <div class="row">
+                        
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4><?php echo  PSTranslator::translate("Additional links (Grouped Stats module)") ?></h4>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="list-group">
+                                        <div class="list-group-item row">
+                                            <div class="col-sm-4 col-xs-12 background-muted">
+                                                <?php echo  PSTranslator::translate("Basic link (for logged in users)") ?>
+                                            </div>
+                                            <div class="col-sm-6 col-xs-12" style="display:inline-block;  word-wrap: break-word;">
+                                                <?= Yii::app()->createAbsoluteUrl(
+                                                    'plugins/direct',
+                                                    [
+                                                        'plugin' => 'PublicStatistics',
+                                                        'method' => 'viewdirect',
+                                                        'surveyid' => $sid,
+                                                        'hook' => 'addrelatedsurveyresponses'
+                                                    ]
+                                                ) ?>
+                                            </div>
+                                            <div class="col-sm-2 col-xs-12" style="display:inline-block;  word-wrap: break-word; ">
+                                                <a href="<?= Yii::app()->createAbsoluteUrl(
+                                                                'plugins/direct',
+                                                                [
+                                                                    'plugin' => 'PublicStatistics',
+                                                                    'method' => 'viewdirect',
+                                                                    'surveyid' => $sid,
+                                                                    'hook' => 'addrelatedsurveyresponses'
+                                                                ]
+                                                            ) ?>" class="btn btn-default" target="_blank">
+                                                    <?php echo  PSTranslator::translate("Open Link") . " " ?><i class="fa fa-external-link"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item row">
+                                            <div class="col-sm-4 col-xs-12 background-muted">
+                                                <?php echo  PSTranslator::translate("Basic link (for non-logged in users)") ?>
+                                            </div>
+                                            <div class="col-sm-6 col-xs-12" style="display:inline-block;  word-wrap: break-word; ">
+                                                <?= Yii::app()->createAbsoluteUrl(
+                                                    'plugins/unsecure',
+                                                    [
+                                                        'plugin' => 'PublicStatistics',
+                                                        'method' => 'viewunsecure',
+                                                        'surveyid' => $sid,
+                                                        'token' => $PS['token'],
+                                                        'hook' => 'addrelatedsurveyresponses'
+                                                    ]
+                                                ) ?>
+                                            </div>
+                                            <div class="col-sm-2 col-xs-12" style="display:inline-block;  word-wrap: break-word; ">
+                                                <a href="<?= Yii::app()->createAbsoluteUrl(
+                                                                'plugins/direct',
+                                                                [
+                                                                    'plugin' => 'PublicStatistics',
+                                                                    'method' => 'viewunsecure',
+                                                                    'surveyid' => $sid,
+                                                                    'token' => $PS['token'],
+                                                                    'hook' => 'addrelatedsurveyresponses'
+                                                                ]
+                                                            ) ?>" class="btn btn-default" target="_blank">
+                                                    <?php echo  PSTranslator::translate("Open Link") ?> <i class="fa fa-external-link"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <?php endif;?>
                     <!-----Basic and additional settings start------>
                     <div class="row">
 
@@ -294,12 +388,12 @@
                     <div class="col-xs-12 jumbotron jumbotron-default well">
                         <?php echo TbHtml::form(array("plugins/direct/plugin/PublicStatistics/method/saveinsurveysettings"), 'post', array('name' => 'psinsurveysettings', 'id' => 'psinsurveysettings')); ?>
                         <input type="hidden" id="currentSurveyId" name="sid" value="<?= $sid ?>" />
-                        <h2><?php echo  PSTranslator::translate("Public Statistics not initialised.") ?></h2>
+                        <h2><?php echo  PSTranslator::translate("Public Statistics not initialised") ?>.</h2>
                         <p class="lead"><?php echo  PSTranslator::translate("") ?></p>
                         <div class="col-sm-12 text-center ls-space margin bottom-10">
                             <button type="submit" class="btn btn-success" id="ps--save-button">
                                 <i class="fa fa-rocket"></i>
-                                <?php echo  PSTranslator::translate("Initialise") ?>
+                                <?php echo  PSTranslator::translate("Initialize") ?>
                             </button>
                         </div>
                         </form>
