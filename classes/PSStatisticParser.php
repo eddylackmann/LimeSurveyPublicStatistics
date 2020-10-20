@@ -524,6 +524,7 @@ class PSStatisticParser {
             $aQuestionData[$sSGQA]['answers'] = $aResponses;
             $aQuestionData[$sSGQA]['calculations'] = $aCalculations;
             $aQuestionData[$sSGQA]['countedValueArray'] = $aCountValues;
+            $aQuestionData[$sSGQA]['template'] = QuestionAttribute::model()->getQuestionAttributes($aQuestionData[$sSGQA]['qid'])['question_template'];
         }
     }
 
