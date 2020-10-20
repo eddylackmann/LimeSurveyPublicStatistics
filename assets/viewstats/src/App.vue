@@ -90,52 +90,63 @@
             <div class="page-header" id="headline">
               <h2>{{ $t("pageTitle", { title: data.surveyname }) }}</h2>
             </div>
-            <div v-if="groupedSurvey" >
-              <h3>
-                {{ $t("GroupedStatistics") }}
-                <span class="stats-warning text-danger">&#x26a0;</span>
-              </h3>
-              <p class="text-danger">
-                <b>{{ $t("GroupedStatisticsNotes") }} </b>
-              </p>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>
-                      {{ $t("id") }}
-                    </th>
-                    <th>
-                      {{ $t("Survey") }}
-                    </th>
-                    <th>
-                      {{ $t("CommonQuestions") }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(addi, id) in additional" :key="id">
-                    <td>{{ addi.id }}</td>
-                    <td>{{ addi.title }}</td>
-                    <td>{{ addi.common }}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <hr />
+
+            <div v-if="groupedSurvey" class="row">
+              <div class="col-xs-12">
+                <h3>
+                  {{ $t("GroupedStatistics") }}
+                  <span class="stats-warning text-danger">&#x26a0;</span>
+                </h3>
+                <p class="text-danger">
+                  <b>{{ $t("GroupedStatisticsNotes") }} </b>
+                </p>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>
+                        {{ $t("id") }}
+                      </th>
+                      <th>
+                        {{ $t("Survey") }}
+                      </th>
+                      <th>
+                        {{ $t("CommonQuestions") }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(addi, id) in additional" :key="id">
+                      <td>{{ addi.id }}</td>
+                      <td>{{ addi.title }}</td>
+                      <td>{{ addi.common }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <hr />
+              </div>
             </div>
-            <p>
-              {{
-                $t("SummaryQuestions", {
-                  questionCount: data.questions,
-                  questionGroupCount: data.questiongroups,
-                })
-              }}
-            </p>
-            <p>
-              {{ $t("summaryResponses", { responsesCount: data.responses }) }}
-            </p>
+
+            <div class="row">
+              <div class="col-xs-12">
+                <p>
+                  {{
+                    $t("SummaryQuestions", {
+                      questionCount: data.questions,
+                      questionGroupCount: data.questiongroups,
+                    })
+                  }}
+                </p>
+                <p>
+                  {{
+                    $t("summaryResponses", { responsesCount: data.responses })
+                  }}
+                </p>
+                <hr />
+              </div>
+            </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row" style="margin-top: 50px">
           <div class="col-xs-12">
             <main-container
               :theme="theme"
@@ -222,56 +233,12 @@ export default {
     },
   },
   methods: {
-    test() {
-      console.log(this.language);
-    },
-
     showContactData() {
       $("#PublicStatistic--contact-modal").modal("show");
     },
     togglePrintable() {
       this.printable = !this.printable;
     },
-    exportToPDF() {
-      this.loading = true;
-      this.createPDFworker()
-        .then((res) => {
-          this.loading = false;
-        })
-        .finally(() => {
-          this.loading = false;
-        });
-    },
-    /*createPDFworker () {
-            const aElementArray = $('.selector--question-panel');
-            return new Promise(function (res, rej) {
-                $('.selector--buttonrow').css('display','none');
-                const createPDF = new CreatePDF();
-
-                $.each(aElementArray, function (i, questionPanel) {
-                    let sizes = { h: $(questionPanel).height(), w: $(questionPanel).width() };
-                    let answerObject = createPDF('sendImg', { html: questionPanel, sizes: sizes });
-                });
-
-                createPDF('getParseHtmlPromise').then(function (resolve) {
-                    var answerObject = createPDF('exportPdf');
-                    var a = document.createElement('a');
-                    if(typeof a.download != "undefined") {
-                        $('body').append("<a id='exportPdf-download-link' style='display:none;' href='" + answerObject.msg + "' download='pdf-public-stats.pdf'></a>");// Must add sid and other info
-                        $("#exportPdf-download-link").get(0).click();
-                        $("#exportPdf-download-link").remove();
-                        res('done');
-                        return;
-                    } 
-                    var newWindow = window.open("about:blank", 600, 800);
-                    newWindow.document.write("<html style='height:100%;width:100%'><iframe style='width:100%;height:100%;' src='"+answerObject.msg+"' border=0></iframe></html>");
-                    $('.selector--buttonrow').css('display','');
-                    res('done');
-                }, function (reject) {
-                    rej(reject);
-                });
-            });
-        }  */
   },
   filters: {
     trim(string) {
@@ -300,6 +267,7 @@ export default {
         this.groupedSurvey = data.GroupedStats;
         this.additional = data.additional;
         this.$i18n.locale = this.language;
+        console.log(data)
       },
     });
   },

@@ -12,7 +12,7 @@
         <div class="row" v-if="isPlottable && !isOther">
           <div
             class="container-center scoped-is-plotly-container"
-            :id="'plotly--'+question.fieldname"
+            :id="'plotly--' + question.fieldname"
           >
             <vue-plotly
               @relayout="correctHeight('relayout')"
@@ -28,27 +28,35 @@
               <button
                 type="button"
                 class="btn"
-                :class="chartType=='bar' ? 'btn-primary' : 'btn-default'"
-                @click="chartType='bar'"
-              >Bar</button>
+                :class="chartType == 'bar' ? 'btn-primary' : 'btn-default'"
+                @click="chartType = 'bar'"
+              >
+                Bar
+              </button>
               <button
                 type="button"
                 class="btn"
-                :class="chartType=='doughnut' ? 'btn-primary' : 'btn-default'"
-                @click="chartType='doughnut'"
-              >Doughnut</button>
+                :class="chartType == 'doughnut' ? 'btn-primary' : 'btn-default'"
+                @click="chartType = 'doughnut'"
+              >
+                Doughnut
+              </button>
               <button
                 type="button"
                 class="btn"
-                :class="chartType=='pie' ? 'btn-primary' : 'btn-default'"
-                @click="chartType='pie'"
-              >Pie</button>
+                :class="chartType == 'pie' ? 'btn-primary' : 'btn-default'"
+                @click="chartType = 'pie'"
+              >
+                Pie
+              </button>
               <button
                 type="button"
                 class="btn"
-                :class="chartType=='line' ? 'btn-primary' : 'btn-default'"
-                @click="chartType='line'"
-              >Line</button>
+                :class="chartType == 'line' ? 'btn-primary' : 'btn-default'"
+                @click="chartType = 'line'"
+              >
+                Line
+              </button>
             </div>
           </div>
         </div>
@@ -61,6 +69,50 @@
             />
           </div>
         </div>
+        <div class="row" v-if="isNpsType || isOther">
+          <div class="col-sm-12 text-center">
+            <h3 style="text-primary">Net Promoter score</h3>
+            <div class="row">
+              <div
+                class="col-md-8 col-sm-12"
+                style="float: none; margin: 0 auto"
+              >
+                <table class="table text-left">
+                  <thead class>
+                    <tr>
+                      <th>{{ $t("Indicators") }}</th>
+                      <th>{{ $t("Number") }}</th>
+                      <th>{{ $t("Percentage") }} (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ $t("Promoters") }} [9-10]</td>
+                      <td>{{ calcNetPromoterScore()[0] }}</td>
+                      <td>{{ calcNetPromoterScore()[1] }} %</td>
+                    </tr>
+                    <tr>
+                      <td>{{ $t("Detractors") }} [0-6]</td>
+                      <td>{{ calcNetPromoterScore()[2] }}</td>
+                      <td>{{ calcNetPromoterScore()[3] }} %</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <hr />
+                <div>
+                  <h3>
+                    <strong>
+                      Score:&nbsp;
+                      <span class="text-danger">{{
+                        calcNetPromoterScore()[6]
+                      }}</span>
+                    </strong>
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col-xs-12">
             <hr />
@@ -69,16 +121,16 @@
         <div class="row">
           <ul class="list-items scoped--noBorderRadius">
             <li
-              v-for="(value,key) in filteredCalculations"
+              v-for="(value, key) in filteredCalculations"
               :key="key"
               class="list-group-item scoped--noBorderRadius col-md-6 col-sm-12"
             >
               <div class="row">
                 <div class="col-xs-8">
-                  {{key | keydescription}}
-                  <small>({{key}})</small>
+                  {{ key | keydescription }}
+                  <small>({{ key }})</small>
                 </div>
-                <div class="col-xs-4">{{value}}</div>
+                <div class="col-xs-4">{{ value }}</div>
               </div>
             </li>
           </ul>
@@ -92,6 +144,7 @@
 import VuePlotly from "@statnett/vue-plotly";
 import WordCloud from "./WordCloud";
 import _ from "lodash";
+import i18n from "../plugins/i18n";
 
 export default {
   name: "QuestionPanel",
@@ -119,7 +172,7 @@ export default {
         scrollZoom: true,
         responsive: true,
         showLink: false,
-        displayModeBar: false,
+        displayModeBar: true,
         displaylogo: false,
       };
     },
@@ -154,9 +207,6 @@ export default {
               marker: {
                 color: this.basecolors,
               },
-              xaxis: {
-                 tickformat: '1',
-              }
             },
           ];
         case "pie":
@@ -202,11 +252,26 @@ export default {
         legend: {
           x: 1,
         },
+        xaxis: {
+          tick0: 0,
+          dtick: 1,
+        },
+        yaxis: {
+          tickmode: 'auto',
+          tick0: 0,
+        },
       };
     },
     isOther() {
       return /.*other.*/.test(this.question.aid);
     },
+    isNpsType() {
+      if (this.question.type == "Net-Promoter-Score") {
+        return true;
+      }
+      return false;
+    },
+
     isPlottable() {
       const nonPlottableTypes = [
         "D",
@@ -237,7 +302,7 @@ export default {
       );
     },
     renderQuestionHTML(question) {
-      return `<small>(${question.aid})</small> | ${question.question}`;
+      return `<small>(${question.aid})</small> <br> ${question.question}`;
     },
     getLabelFromAnswers(key) {
       if (this.question.answeroptions === undefined) {
@@ -252,6 +317,51 @@ export default {
         ? answerObject.answer
         : key;
     },
+    calcNetPromoterScore() {
+      //NPS Berechnungen auf Statistik anpassen
+      var answers = this.question.answers;
+      var promoter = 0;
+      var indifferent = 0;
+      var total = answers.length;
+      var critic = 0;
+      var result = [];
+      if (answers) {
+        answers.forEach((answer) => {
+          if (answer >= 9) {
+            promoter += 1;
+          }
+          if (answer <= 6) {
+            critic += 1;
+          }
+
+          if (answer == 7) {
+            indifferent += 1;
+          }
+
+          if (answer == 8) {
+            indifferent += 1;
+          }
+        });
+
+        //Promotoren Berechnung
+        result[0] = promoter;
+        result[1] = Math.round((promoter / total) * 100);
+
+        //Kritikern Berechnung
+        result[2] = critic;
+        result[3] = Math.round((critic / total) * 100);
+
+        //Indifferenten Berechnung
+        result[4] = indifferent;
+        result[5] = Math.round((indifferent / total) * 100);
+
+        result[6] = Math.max(0, result[1] - result[3]);
+        result[7] = total;
+
+        return result;
+      }
+    },
+
     createWordMap(wordsArray) {
       // create map for word counts
       var wordsMap = {};
@@ -276,13 +386,13 @@ export default {
   filters: {
     keydescription(key) {
       const keyDescriptions = {
-        count: "Number of responses",
-        countValid: "Number of valid responses",
-        countInvalid: "Number of invalid, or empy responses",
-        median: "Median",
-        average: "Average (simple)",
-        variance: "Variance",
-        std: "Standard deviation",
+        count: i18n.t("NumberOfResponses"),
+        countValid: i18n.t("NumberOfValid"),
+        countInvalid: i18n.t("NumberOfInvalid"),
+        median: i18n.t("Median"),
+        average: i18n.t("Average"),
+        variance: i18n.t("Variance"),
+        std: i18n.t("Std"),
       };
       return keyDescriptions[key];
     },

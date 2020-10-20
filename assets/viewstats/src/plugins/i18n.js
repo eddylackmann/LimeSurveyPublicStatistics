@@ -21,7 +21,23 @@ export default new VueI18n({
       GroupedStatisticsNotes: "This satistic contains results from other surveys. The responses are grouped and evaluated together.",
 
       SummaryQuestions: "This survey contains {questionCount} questions in {questionGroupCount} question groups.",
-      summaryResponses: "A total of {responsesCount} responses have been collected."
+      summaryResponses: "A total of {responsesCount} responses have been collected.",
+
+      NumberOfResponses:"Number of responses",
+      NumberOfValid:"Number of valid responses",
+      NumberOfInvalid:"Number of invalid, or empy responses",
+      Median:"Median",
+      Average:"Average (simple)",
+      Variance:"Variance",
+      Std:"Standard deviation",
+
+
+      Indicators:"Indicators",
+      Number:"Number",
+      Percentage:"Percentage",
+      Promoters:"Promoters",
+      Detractors:"Detractors",
+      Score:"Score",
     },
 
     de: {
@@ -37,7 +53,23 @@ export default new VueI18n({
       GroupedStatisticsNotes: "Diese Satistik enthält Ergebnisse aus anderen Umfragen. Die Antworten werden gruppiert und zusammen ausgewertet.",
 
       SummaryQuestions: "Diese Umfrage enthält {questionCount} Fragen in {questionGroupCount} Fragengruppe.",
-      summaryResponses: "Insgesamt wurden {responsesCount} Antworten gesammelt"
+      summaryResponses: "Insgesamt wurden {responsesCount} Antworten gesammelt",
+
+      NumberOfResponses:"Anzahl der Antworten",
+      NumberOfValid:"Anzahl gültiger Antworten",
+      NumberOfInvalid:"Anzahl ungültiger oder leerer Antworten",
+      Median:"Median",
+      Average:"Durchschnitt (einfach)",
+      Variance:"Varianz",
+      Std:"Standardabweichung",
+
+
+      Indicators:"Indikatoren",
+      Number:"Anzahl",
+      Percentage:"Anteil",
+      Promoters:"Promotoren",
+      Detractors:"Kritiker",
+      Score:"Score"
     },
 
     fr: {
@@ -53,7 +85,23 @@ export default new VueI18n({
       GroupedStatisticsNotes: "Ce satistique contient des résultats d'autres sondages. Les réponses sont regroupées et évaluées ensemble.",
 
       SummaryQuestions: "Cet sondage contient {questionCount} questions dans {questionGroupCount} groupes de questions.",
-      summaryResponses: "Un total de {responsesCount} réponses a été collecté."
+      summaryResponses: "Un total de {responsesCount} réponses a été collecté.",
+
+      NumberOfResponses:"Nombre de réponses",
+      NumberOfValid:"Nombre de réponses valides",
+      NumberOfInvalid:"Nombre de réponses invalides",
+      Median:"Médiane",
+      Average:"Moyenne (simple)",
+      Variance:"Variance",
+      Std:"Ecart type",
+
+
+      Indicators:"Indicateurs",
+      Number:"Total",
+      Percentage:"Pourcentage",
+      Promoters:"Promoteurs",
+      Detractors:"Détracteurs",
+      Score:"Score"
     }
 
   }

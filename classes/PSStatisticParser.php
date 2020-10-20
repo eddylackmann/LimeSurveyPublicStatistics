@@ -536,12 +536,9 @@ class PSStatisticParser {
                 $result[gT('No answer/Not shown')] = isset($result[gT('No answer/Not shown')]) ? $result[gT('No answer/Not shown')]+1 : 0;
                 continue;
             }
+            
 
-            if (!isset($result[$this->_filterForDefaultString($itrt)])) {
-                $result[$itrt] = 0;
-            }
-
-            $result[$itrt] = $result[$itrt]+1;
+            $result[$this->_filterForDefaultString($itrt)] = $result[$this->_filterForDefaultString($itrt)]+1;
         }
         return $result;
         
