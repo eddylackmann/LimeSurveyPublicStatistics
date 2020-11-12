@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * PubliStatistics Controller
+ * Public and shareable statistics - Allow either sharing of statistics with a link, a one time token, or with email and password 
+ * 
+ * @author Markus Flür | LimeSurvey Team <info@limeSurvey.org>
+ * @license GPL 2.0 or later
+ * @category Plugin 
+ * 
+ */
+
 spl_autoload_register(function ($class_name) {
     if (preg_match("/^PS.*/", $class_name)) {
         if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $class_name . '.php')) {
@@ -72,7 +82,6 @@ class PublicStatistics extends PluginBase
     }
 
 
-
     /**
      * Relay a direct request to the called method
      *
@@ -121,7 +130,6 @@ class PublicStatistics extends PluginBase
     {
         $sid = $request->getPost('sid');
         $oSurvey = $this->getPSSurveyModel($sid);
-
         $activated = $request->getPost('activated', 1);
         $token = $request->getPost('token', NULL);
         $expire = $request->getPost('expire', NULL);
@@ -157,11 +165,28 @@ class PublicStatistics extends PluginBase
     public function insurveysettings()
     {
         $sid = Yii::app()->request->getParam('surveyid');
-    
+        $initialised = false;
+        $hookActive = false;
+        $PSSurvey = PSSurveys::model()->findByPk($sid);
+        $hook = PSHooks::model()->findByAttributes(["sid" => $sid, "active" => 1, "hook" => "addRelatedSurveyResponses"]);
+
+        //Check if Statistic is active
+        if ($PSSurvey) {
+            $initialised = true;
+        }
+
+        //Check if Additional hooks exists
+        if ($hook) {
+            $hookActive = true;
+        }
+
         $aData = PSSurveyController::model()->prepareSettingsForRendering($sid);
 
+        $aData["initialised"] = $initialised;
+        $aData["relatedSurveyhookActive"] = $hookActive;
+
         $this->registerScript('assets/publicstatisticsettings.js', LSYii_ClientScript::POS_END);
-       
+
         return $this->renderPartial('insurveysettings', $aData, true);
     }
 
@@ -209,7 +234,45 @@ class PublicStatistics extends PluginBase
 
         $sid = $request->getParam('surveyid');
         $oParser = new PSStatisticParser($sid);
-        $aResponseDataList = $oParser->createParsedDataBlock();
+
+        $aResponseDataList = [];
+
+        //add aditional data when addrelatedsurveyresponses hook is active 
+        if ($request->getParam('hook') && $request->getParam('hook') == "addrelatedsurveyresponses") {
+            $hookdata =  PSHooksHelper::prepareHookData($sid);
+            $additional = PSHooks::model()->findByAttributes(["sid" => $sid, "hook" => "addRelatedSurveyResponses", "active" => 1]);
+            $data =  $oParser->createParsedDataBlock();
+          
+            $aResponseDataList = PSHooksHelper::mergeHookData($data, $hookdata);
+            /*echo "<pre>";
+            print_r($aResponseDataList);
+            echo "</pre>";
+            die();*/
+
+            if ($hookdata) {
+                $aResponseDataList["GroupedStats"] = true;
+                $surveys = [];
+                if ($additional) {
+                    $data = json_decode($additional->hook_data);
+                    foreach ($data as $ad) {
+
+                        if (count($ad->common) > 0) {
+                            $surveys[] = [
+                                "id" => $ad->surveyId,
+                                "title" => $ad->surveyTitle,
+                                "common" => count($ad->common)
+                            ];
+                        }
+                    }
+                }
+                $aResponseDataList["additional"] = $surveys;
+            }
+        }else{
+            $aResponseDataList = $oParser->createParsedDataBlock();
+            $aResponseDataList["GroupedStats"] = false;
+            $aResponseDataList["additional"] = array();
+        }
+
 
         return $this->renderPartial('toJson', ['data' => $aResponseDataList]);
     }
@@ -230,38 +293,55 @@ class PublicStatistics extends PluginBase
         }
 
         $sid = $request->getParam('surveyid');
-
+        $language = App()->language;
         $baseColors = json_decode($this->get('basecolors'));
 
         $oSurvey = PSSurveys::model()->findByPk($sid);
-        if ($oSurvey == null || $oSurvey->survey->active !== 'Y') {
+        if ($oSurvey == null || $oSurvey->survey->active !== 'Y' || !$oSurvey->activated) {
             return $this->errorSurveyNotActive();
         }
+
+
+
+        $dataUrl =  Yii::app()->createUrl(
+            'plugins/direct',
+            [
+                "plugin" => "PublicStatistics",
+                'method' => "getDataDirect",
+                'surveyid' => $sid
+            ]
+        );
+
+        if ($request->getParam('hook') && $request->getParam('hook') == 'addrelatedsurveyresponses') {
+            
+            $dataUrl =  Yii::app()->createUrl(
+                'plugins/direct',
+                [
+                    "plugin" => "PublicStatistics",
+                    'method' => "getDataDirect",
+                    'surveyid' => $sid,
+                    'hook' => $request->getParam('hook'),
+                ]
+            );
+        }
+
         $output = $this->renderPartial(
             'viewstats',
             [
-                'getDataUrl' => Yii::app()->createUrl(
-                    'plugins/direct',
-                    [
-                        "plugin" => "PublicStatistics",
-                        'method' => "getDataDirect",
-                        'surveyid' => $sid
-                    ]
-                ),
-
+                'getDataUrl' => $dataUrl,
                 'theme' => $oSurvey->survey->template,
                 'basecolors' => $baseColors,
+                'language'   => $language,
                 'wordCloudSettings' => PSWordCloudSettings::getSettings(),
                 'surveyData' => PSSurveyController::generateData($oSurvey->data)
             ],
             true
         );
 
-        Yii::app()->getClientScript()->registerPackage('jspdf');
+
         $oTemplate = Template::model()->getInstance($oSurvey->survey->template);
         Yii::app()->getClientScript()->registerPackage($oTemplate->sPackageName, LSYii_ClientScript::POS_BEGIN);
-        $this->registerCss('assets/viewstats/build.min/css/main.css');
-        $this->registerScript('assets/viewstats/build/js/viewstats.js', null, LSYii_ClientScript::POS_END);
+        $this->registerAssets();
         Yii::app()->getClientScript()->render($output);
         echo $output;
         return;
@@ -294,12 +374,13 @@ class PublicStatistics extends PluginBase
 
         $baseColors = json_decode($this->get('basecolors'));
 
-        if (($timecheck == null ||  $sidcheck == null)
+        /*if (($timecheck == null ||  $sidcheck == null)
             && ($timecheck != $timeCheckParam || $sid != $sidcheck)
         ) {
             return $this->renderPartial('toJson', ['data' => ['data' => [], 'questiongroups' => []]]);
         }
 
+        */
         if (
             $oSurvey == null
             || ($token !== $oSurvey->token && $oSurvey->token != null)
@@ -308,7 +389,33 @@ class PublicStatistics extends PluginBase
         }
 
         $oParser = new PSStatisticParser($sid);
+
         $aResponseDataList = $oParser->createParsedDataBlock();
+        $aResponseDataList["GroupedStats"] = false;
+        $aResponseDataList["additional"] = array();
+
+        if ($request->getParam('hook') && $request->getParam('hook') == "addrelatedsurveyresponses") {
+            $hookdata =  PSHooksHelper::prepareHookData($sid);
+            $additional = PSHooks::model()->findByAttributes(["sid" => $sid, "hook" => "addRelatedSurveyResponses", "active" => 1]);
+
+            //var_dump($additional);
+            //$parsedAdditional = PSHooksHelper::mergeHookData($aResponseDataList, $hookdata);
+            if ($hookdata) {
+                $aResponseDataList["GroupedStats"] = true;
+                $surveys = [];
+                if ($additional) {
+                    $data = json_decode($additional->hook_data);
+                    foreach ($data as $ad) {
+                        $surveys[] = [
+                            "id" => $ad->surveyId,
+                            "title" => $ad->surveyTitle,
+                            "common" => count($ad->common)
+                        ];
+                    }
+                }
+                $aResponseDataList["additional"] = $surveys;
+            }
+        }
 
         return $this->renderPartial('toJson', ['data' => $aResponseDataList, 'basecolors' => $baseColors]);
     }
@@ -380,31 +487,47 @@ class PublicStatistics extends PluginBase
         }
 
         $oParser = new PSStatisticParser($sid);
-        $aResponseDataList = $oParser->createParsedDataBlock();
+        $language = App()->language;
+        $baseColors = json_decode($this->get('basecolors'));
+        $url = Yii::app()->createUrl(
+            'plugins/unsecure',
+            [
+                "plugin" => "PublicStatistics",
+                'method' => "getDataUnsecure",
+                'surveyid' => $sid,
+                'timecheck' => $randomToken,
+                'token' => $oSurvey->token
+            ]
+        );
+
+        if ($request->getParam('hook') && $request->getParam('hook') == "addrelatedsurveyresponses") {
+            $url = Yii::app()->createUrl(
+                'plugins/unsecure',
+                [
+                    "plugin" => "PublicStatistics",
+                    'method' => "getDataUnsecure",
+                    'surveyid' => $sid,
+                    'timecheck' => $randomToken,
+                    'token' => $oSurvey->token,
+                    'hook' => $request->getParam('hook'),
+                ]
+            );
+        }
 
         $output = $this->renderPartial(
             'viewstats',
             [
-                'getDataUrl' => Yii::app()->createUrl(
-                    'plugins/unsecure',
-                    [
-                        "plugin" => "PublicStatistics",
-                        'method' => "getDataUnsecure",
-                        'surveyid' => $sid,
-                        'timecheck' => $randomToken,
-                        'token' => $oSurvey->token
-                    ]
-                ),
+                'getDataUrl' => $url,
                 'theme' => $oSurvey->survey->template,
                 'wordCloudSettings' => PSWordCloudSettings::getSettings(),
-                'surveyData' => PSSurveyController::generateData($oSurvey->data)
+                'surveyData' => PSSurveyController::generateData($oSurvey->data),
+                'basecolors' => $baseColors,
+                'language'   => $language,
             ],
             true
         );
 
-        Yii::app()->getClientScript()->registerPackage('jspdf');
-        $this->registerCss('assets/viewstats/build.min/css/main.css');
-        $this->registerScript('assets/viewstats/build/js/viewstats.js', null, LSYii_ClientScript::POS_END);
+        $this->registerAssets();
         Yii::app()->getClientScript()->render($output);
         echo $output;
         return;
@@ -491,7 +614,14 @@ class PublicStatistics extends PluginBase
         return $success;
     }
 
-    ##########################################################################################
+
+    private function registerAssets()
+    {
+        //Yii::app()->getClientScript()->registerPackage('jspdf');
+        $this->registerCss('assets/viewstats/build.min/css/main.css');
+
+        $this->registerScript('assets/viewstats/build/js/viewstats.js', null, LSYii_ClientScript::POS_END);
+    }
     /**
      * Adding a script depending on path of the plugin
      * This method checks if the file exists depending on the possible different plugin locations, which makes this Plugin LimeSurvey Pro safe.

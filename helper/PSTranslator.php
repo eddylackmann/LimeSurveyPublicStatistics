@@ -62,7 +62,12 @@ class PSTranslator
                 "en" => "Public Statistics - Settings",
                 "de" => "Öffentliche Statistik - Einstellung",
                 "fr" => "Statistiques publiques - Paramètres"
+            ],
 
+            "Public Statistics" => [
+                "en" => "Public statistics (Plugin)",
+                "de" => "Öffentliche Statistik (Plugin)",
+                "fr" => "Statistiques publiques (Plug-in)"
             ],
 
             "Shareable links" => [
@@ -307,6 +312,12 @@ class PSTranslator
                 "en" => "Additional links (Grouped Stats module)",
                 "de" => "Zusätzliche Links (Modul 'Gruppierte Statistik')",
                 "fr" => "Liens supplémentaires (module Statistiques groupées)"
+            ],
+            
+            "This plugin is only available for an activated survey!" => [
+                "en" => "This plugin is only available for an activated survey!",
+                "de" => "Dieses Plugin ist nur für eine aktivierte Umfrage verfügbar!",
+                "fr" => "Ce plugin n'est disponible que pour un questionnaire activé!"
             ],
         ];
 

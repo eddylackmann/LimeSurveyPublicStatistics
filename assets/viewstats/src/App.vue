@@ -84,7 +84,7 @@
       </nav>
     </transition>
     <transition name="fade">
-      <div class="container" v-if="!loading">
+      <div class="container" v-if="!loading" id="statsPrint">
         <div class="row">
           <div class="col-xs-12">
             <div class="page-header" id="headline">
@@ -160,6 +160,7 @@
         </div>
       </div>
     </transition>
+    <div id="pdf"></div>
     <div
       class="modal fade"
       id="PublicStatistic--contact-modal"
@@ -267,7 +268,6 @@ export default {
         this.groupedSurvey = data.GroupedStats;
         this.additional = data.additional;
         this.$i18n.locale = this.language;
-        console.log(data)
       },
     });
   },

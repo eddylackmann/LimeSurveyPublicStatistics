@@ -1,6 +1,9 @@
 <template>
   <div class="panel panel-default selector--question-panel">
     <div class="panel-heading">
+      <div v-if="getHookWarning()">
+        <span class="stats-warning text-danger" style="font-size:20pt">&#x26a0;</span>
+      </div>
       <h3
         class="panel-title anchor--title"
         :id="`link-anchor--${question.fieldname}`"
@@ -60,6 +63,29 @@
             </div>
           </div>
         </div>
+        <hr>
+         <div class="row" v-if="isPlottable && !isOther" >
+          <div class="col-xs-12 " >
+            <div class="col-xs-11 " style="float: none; margin: 0 auto" >
+            <table class="table text-left">
+              <thead>
+                <tr>
+                  <th>Antwort</th>
+                  <th>Anzahl</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr v-for="(value, key) in testCountedValueArray" :key="key">
+                  <td>{{ key }}</td>
+                  <td>{{ value }}</td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+        <hr>
         <div class="row" v-if="isTextType || isOther">
           <div class="col-sm-12 text-center">
             <word-cloud
@@ -69,7 +95,7 @@
             />
           </div>
         </div>
-        <div class="row" v-if="isNpsType || isOther">
+        <div class="row" v-if="isNpsType">
           <div class="col-sm-12 text-center">
             <h3 style="text-primary">Net Promoter score</h3>
             <div class="row">
@@ -115,7 +141,7 @@
         </div>
         <div class="row">
           <div class="col-xs-12">
-            <hr />
+            <hr>
           </div>
         </div>
         <div class="row">
@@ -135,6 +161,8 @@
             </li>
           </ul>
         </div>
+        <hr />
+       
       </div>
     </div>
   </div>
@@ -167,6 +195,13 @@ export default {
         (value, index) => value != null
       );
     },
+    testCountedValueArray() {
+      return _.pickBy(
+        this.question.countedValueArray,
+        (value, index) => value != null
+      );
+    },
+
     plotlyConfig() {
       return {
         scrollZoom: true,
@@ -250,14 +285,15 @@ export default {
       return {
         title: this.uppercaseFirst(this.chartType + "-chart"),
         legend: {
-          x: 1,
+          orientation: "h",
+          side: "bottom",
         },
         xaxis: {
           tick0: 0,
           dtick: 1,
         },
         yaxis: {
-          tickmode: 'auto',
+          tickmode: "auto",
           tick0: 0,
         },
       };
@@ -266,7 +302,7 @@ export default {
       return /.*other.*/.test(this.question.aid);
     },
     isNpsType() {
-      if (this.question.type == "Net-Promoter-Score") {
+      if (this.question.template == "Net-Promoter-Score") {
         return true;
       }
       return false;
@@ -301,6 +337,11 @@ export default {
           .height()
       );
     },
+
+    getHookWarning() {
+      return this.question.additionalHook;
+    },
+
     renderQuestionHTML(question) {
       return `<small>(${question.aid})</small> <br> ${question.question}`;
     },

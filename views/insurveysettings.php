@@ -404,7 +404,7 @@
         <?php else : ?>
             <div class="row">
                 <div class="col-md-offset-2 col-md-8 col-sm-12 well jumbotron">
-                    <h4> <?php echo  PSTranslator::translate("Public statistic is only available for an activated survey!") ?> </h4>
+                    <h4> <?php echo  PSTranslator::translate("This plugin is only available for an activated survey!") ?> </h4>
                 </div>
             </div>
         <?php endif; ?>
