@@ -38,6 +38,8 @@ export default new VueI18n({
       Promoters:"Promoters",
       Detractors:"Detractors",
       Score:"Score",
+      Answer:"Answer",
+      Count:"Count"
     },
 
     de: {
@@ -69,7 +71,9 @@ export default new VueI18n({
       Percentage:"Anteil",
       Promoters:"Promotoren",
       Detractors:"Kritiker",
-      Score:"Score"
+      Score:"Score",
+      Answer:"Antwort",
+      Count:"Anzahl"
     },
 
     fr: {
@@ -101,7 +105,9 @@ export default new VueI18n({
       Percentage:"Pourcentage",
       Promoters:"Promoteurs",
       Detractors:"Détracteurs",
-      Score:"Score"
+      Score:"Score",
+      Answer:"Réponse",
+      Count:"Nombre"
     }
 
   }

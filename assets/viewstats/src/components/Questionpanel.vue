@@ -1,8 +1,10 @@
 <template>
-  <div class="panel panel-default selector--question-panel">
+  <div class="panel panel-default selector--question-panel" :id="`questionPanel-${question.fieldname}`">
     <div class="panel-heading">
       <div v-if="getHookWarning()">
-        <span class="stats-warning text-danger" style="font-size:20pt">&#x26a0;</span>
+        <span class="stats-warning text-danger" style="font-size: 20pt"
+          >&#x26a0;</span
+        >
       </div>
       <h3
         class="panel-title anchor--title"
@@ -62,30 +64,32 @@
               </button>
             </div>
           </div>
+          <hr />
         </div>
-        <hr>
-         <div class="row" v-if="isPlottable && !isOther" >
-          <div class="col-xs-12 " >
-            <div class="col-xs-11 " style="float: none; margin: 0 auto" >
-            <table class="table text-left">
-              <thead>
-                <tr>
-                  <th>Antwort</th>
-                  <th>Anzahl</th>
-                </tr>
-              </thead>
 
-              <tbody>
-                <tr v-for="(value, key) in testCountedValueArray" :key="key">
-                  <td>{{ key }}</td>
-                  <td>{{ value }}</td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="row" v-if="isPlottable && !isOther">
+          <div class="col-xs-12">
+            <div class="col-xs-12" style="float: none; margin: 0 auto">
+              <table class="table text-left">
+                <thead>
+                  <tr>
+                    <th>{{ $t("Answer") }}</th>
+                    <th>{{ $t("Count") }}</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr v-for="(value, key) in testCountedValueArray" :key="key">
+                    <td>{{ getLabelFromAnswers(key) }}</td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
+          <hr />
         </div>
-        <hr>
+
         <div class="row" v-if="isTextType || isOther">
           <div class="col-sm-12 text-center">
             <word-cloud
@@ -141,7 +145,7 @@
         </div>
         <div class="row">
           <div class="col-xs-12">
-            <hr>
+            <hr />
           </div>
         </div>
         <div class="row">
@@ -162,7 +166,14 @@
           </ul>
         </div>
         <hr />
-       
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <div class="row">
+        <div class="col-md-12 col-xs-12">
+          <span class="btn btn-default" @click="download" > <i class="fa fa-download" aria-hidden="true"></i> </span>
+        </div>
       </div>
     </div>
   </div>
@@ -173,6 +184,8 @@ import VuePlotly from "@statnett/vue-plotly";
 import WordCloud from "./WordCloud";
 import _ from "lodash";
 import i18n from "../plugins/i18n";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 export default {
   name: "QuestionPanel",
@@ -336,6 +349,27 @@ export default {
           .find("svg")
           .height()
       );
+    },
+    download() {
+      var el = '#questionPanel-'+ this.question.fieldname;
+
+      console.log(el);
+      html2canvas(document.querySelector(el), {imageTimeout: 5000, useCORS: true}).then(canvas => {
+        
+        const fileName = "chart";
+        const link = document.createElement("a");
+        link.download = fileName + ".png";
+        
+        let img = canvas.toDataURL('image/png');
+        console.log(img);
+
+        link.href = img;
+        link.click();
+        //let pdf = new jsPDF()
+        //pdf.addImage(img, 'JPEG', 5, 5, 5, 5)
+        //pdf.save('chart.pdf')
+       
+      })
     },
 
     getHookWarning() {

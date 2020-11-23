@@ -90,6 +90,25 @@
             <div class="page-header" id="headline">
               <h2>{{ $t("pageTitle", { title: data.surveyname }) }}</h2>
             </div>
+            
+            <div class="row">
+              <div class="col-xs-12">
+                <p>
+                  {{
+                    $t("SummaryQuestions", {
+                      questionCount: data.questions,
+                      questionGroupCount: data.questiongroups,
+                    })
+                  }}
+                </p>
+                <p>
+                  {{
+                    $t("summaryResponses", { responsesCount: data.responses })
+                  }}
+                </p>
+                <hr />
+              </div>
+            </div>
 
             <div v-if="groupedSurvey" class="row">
               <div class="col-xs-12">
@@ -126,24 +145,6 @@
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-xs-12">
-                <p>
-                  {{
-                    $t("SummaryQuestions", {
-                      questionCount: data.questions,
-                      questionGroupCount: data.questiongroups,
-                    })
-                  }}
-                </p>
-                <p>
-                  {{
-                    $t("summaryResponses", { responsesCount: data.responses })
-                  }}
-                </p>
-                <hr />
-              </div>
-            </div>
           </div>
         </div>
         <div class="row" style="margin-top: 50px">
