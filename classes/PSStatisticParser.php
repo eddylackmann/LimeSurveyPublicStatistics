@@ -718,6 +718,8 @@ class PSStatisticParser
             return $a['sortorder'] < $b['sortorder'] ? -1 : 1;
         });
 
+        //print_r($aAnswers);
+        //die();
         return $aAnswers;
     }
 

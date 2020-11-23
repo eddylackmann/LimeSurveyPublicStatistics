@@ -168,6 +168,7 @@ class PublicStatistics extends PluginBase
         $initialised = false;
         $hookActive = false;
         $PSSurvey = PSSurveys::model()->findByPk($sid);
+
         $hook = PSHooks::model()->findByAttributes(["sid" => $sid, "active" => 1, "hook" => "addRelatedSurveyResponses"]);
 
         //Check if Statistic is active
@@ -242,12 +243,8 @@ class PublicStatistics extends PluginBase
             $hookdata =  PSHooksHelper::prepareHookData($sid);
             $additional = PSHooks::model()->findByAttributes(["sid" => $sid, "hook" => "addRelatedSurveyResponses", "active" => 1]);
             $data =  $oParser->createParsedDataBlock();
-          
+
             $aResponseDataList = PSHooksHelper::mergeHookData($data, $hookdata);
-            /*echo "<pre>";
-            print_r($aResponseDataList);
-            echo "</pre>";
-            die();*/
 
             if ($hookdata) {
                 $aResponseDataList["GroupedStats"] = true;
@@ -267,12 +264,11 @@ class PublicStatistics extends PluginBase
                 }
                 $aResponseDataList["additional"] = $surveys;
             }
-        }else{
+        } else {
             $aResponseDataList = $oParser->createParsedDataBlock();
             $aResponseDataList["GroupedStats"] = false;
             $aResponseDataList["additional"] = array();
         }
-
 
         return $this->renderPartial('toJson', ['data' => $aResponseDataList]);
     }
@@ -313,7 +309,7 @@ class PublicStatistics extends PluginBase
         );
 
         if ($request->getParam('hook') && $request->getParam('hook') == 'addrelatedsurveyresponses') {
-            
+
             $dataUrl =  Yii::app()->createUrl(
                 'plugins/direct',
                 [
@@ -374,13 +370,12 @@ class PublicStatistics extends PluginBase
 
         $baseColors = json_decode($this->get('basecolors'));
 
-        /*if (($timecheck == null ||  $sidcheck == null)
+        if (($timecheck == null ||  $sidcheck == null)
             && ($timecheck != $timeCheckParam || $sid != $sidcheck)
         ) {
             return $this->renderPartial('toJson', ['data' => ['data' => [], 'questiongroups' => []]]);
         }
 
-        */
         if (
             $oSurvey == null
             || ($token !== $oSurvey->token && $oSurvey->token != null)
@@ -389,17 +384,15 @@ class PublicStatistics extends PluginBase
         }
 
         $oParser = new PSStatisticParser($sid);
-
-        $aResponseDataList = $oParser->createParsedDataBlock();
-        $aResponseDataList["GroupedStats"] = false;
-        $aResponseDataList["additional"] = array();
+        $aResponseDataList = [];
 
         if ($request->getParam('hook') && $request->getParam('hook') == "addrelatedsurveyresponses") {
             $hookdata =  PSHooksHelper::prepareHookData($sid);
             $additional = PSHooks::model()->findByAttributes(["sid" => $sid, "hook" => "addRelatedSurveyResponses", "active" => 1]);
+            $data =  $oParser->createParsedDataBlock();
 
-            //var_dump($additional);
-            //$parsedAdditional = PSHooksHelper::mergeHookData($aResponseDataList, $hookdata);
+            $aResponseDataList = PSHooksHelper::mergeHookData($data, $hookdata);
+
             if ($hookdata) {
                 $aResponseDataList["GroupedStats"] = true;
                 $surveys = [];
@@ -415,6 +408,10 @@ class PublicStatistics extends PluginBase
                 }
                 $aResponseDataList["additional"] = $surveys;
             }
+        } else {
+            $aResponseDataList = $oParser->createParsedDataBlock();
+            $aResponseDataList["GroupedStats"] = false;
+            $aResponseDataList["additional"] = array();
         }
 
         return $this->renderPartial('toJson', ['data' => $aResponseDataList, 'basecolors' => $baseColors]);
@@ -440,8 +437,8 @@ class PublicStatistics extends PluginBase
 
         $randomToken = crypt(date('YHM'), Yii::app()->getConfig('sitename'));
 
-        // setcookie('LS'.hash('adler32', $sid.'secureHash'), $randomToken, 0, '/', $_SERVER['SERVER_NAME'], true);
-        // setcookie('LS'.hash('adler32', $sid.'currentSID'), $sid, 0, '/', $_SERVER['SERVER_NAME'], true);
+        setcookie('LS' . hash('adler32', $sid . 'secureHash'), $randomToken, 0, '/', $_SERVER['SERVER_NAME'], true);
+        setcookie('LS' . hash('adler32', $sid . 'currentSID'), $sid, 0, '/', $_SERVER['SERVER_NAME'], true);
         setcookie('LS' . hash('adler32', $sid . 'secureHash'), $randomToken, ($_SERVER['REQUEST_TIME'] + 5 * 60), '/', "", true);
         setcookie('LS' . hash('adler32', $sid . 'currentSID'), $sid, ($_SERVER['REQUEST_TIME'] + 5 * 60), '/', "", true);
 
@@ -486,7 +483,6 @@ class PublicStatistics extends PluginBase
             return;
         }
 
-        $oParser = new PSStatisticParser($sid);
         $language = App()->language;
         $baseColors = json_decode($this->get('basecolors'));
         $url = Yii::app()->createUrl(
@@ -621,6 +617,8 @@ class PublicStatistics extends PluginBase
         $this->registerCss('assets/viewstats/build.min/css/main.css');
 
         $this->registerScript('assets/viewstats/build/js/viewstats.js', null, LSYii_ClientScript::POS_END);
+        $this->registerScript('assets/viewstats/build/js/0.js', null, LSYii_ClientScript::POS_END);
+        $this->registerScript('assets/viewstats/build/js/1.js', null, LSYii_ClientScript::POS_END);
     }
     /**
      * Adding a script depending on path of the plugin
