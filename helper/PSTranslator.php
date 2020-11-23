@@ -310,8 +310,8 @@ class PSTranslator
 
             "Additional links (Grouped Stats module)" => [
                 "en" => "Additional links (Grouped Stats module)",
-                "de" => "Zusätzliche Links (Modul 'Gruppierte Statistik')",
-                "fr" => "Liens supplémentaires (module Statistiques groupées)"
+                "de" => "Zusätzliche Links (Gruppierte Statistiken)",
+                "fr" => "Liens supplémentaires (Statistiques groupées)"
             ],
             
             "This plugin is only available for an activated survey!" => [
