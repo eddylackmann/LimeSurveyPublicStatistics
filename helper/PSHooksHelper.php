@@ -66,7 +66,7 @@ class PSHooksHelper
             } else {
                 $hook = PSHooks::model()->findAllByAttributes(["hook" => $hookName]);
                 if ($hook) {
-                    return $hook->deleteAll();
+                    return PSHooks::model()->deleteAllByAttributes(["hook" => $hookName]);
                 }
             }
         }
@@ -137,7 +137,11 @@ class PSHooksHelper
     public static function mergeHookdata($surveyData, $hookData)
     {
         $result = [];
-        //print_r($surveyData['questiongroups']);
+
+        //print_r($hookData);
+
+        //die();
+
         foreach ($surveyData['questiongroups'] as $key => $questionGroup) {
 
             if ($questionGroup) {
