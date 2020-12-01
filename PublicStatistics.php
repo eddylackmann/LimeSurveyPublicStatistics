@@ -594,7 +594,7 @@ class PublicStatistics extends PluginBase
         $body = $this->renderPartial(
             'inviteEmail',
             [
-                'statisticsLink' => Yii::app()->createUrl('plugins/unsecure', [
+                'statisticsLink' => Yii::app()->createAbsoluteUrl('plugins/unsecure', [
                     'plugin' => 'PublicStatistics',
                     'method' => 'viewunsecure',
                     'sid' => $oLogin->sid
